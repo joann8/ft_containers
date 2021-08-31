@@ -55,7 +55,7 @@ namespace ft
             //____________ operators
             // La majorité des opération sont -n car c'est un reverse it donc reverse order
 
-            reverse_iterator& operator+(difference_type n) const
+            reverse_iterator operator+(difference_type n) const
             {
                 return reverse_iterator(base() - n); //_current -n possible
             }
@@ -72,14 +72,14 @@ namespace ft
                 return *this;
             }           
 
-            reverse_iterator& operator++(int)
+            reverse_iterator operator++(int)
             {
                 reverse_iterator tmp = *this;
-                _current--;// brunet dans l'autre sens
+                ++(*this);
                 return tmp;
             }
 
-            reverse_iterator& operator-(difference_type n) const
+            reverse_iterator operator-(difference_type n) const
             {
                 return reverse_iterator(base() + n);
             }
@@ -96,16 +96,16 @@ namespace ft
                 return *this;
             }
 
-            reverse_iterator& operator--(int)
+            reverse_iterator operator--(int)
             {
                 reverse_iterator tmp = *this;
-                _current++; //brunet dans l'autre sens
+                --(*this);
                 return tmp;
             }
        
             reference operator*() const // A RECHECKER retour function
             {
-                iterator_type tmp(_current);
+                iterator_type tmp = _current;
                 tmp--;
                 return *tmp; //return a reference to the element previous to current
             }
@@ -149,7 +149,7 @@ namespace ft
     template <class Iterator1, class Iterator2>
     bool operator>(const reverse_iterator<Iterator1>& lhs, const reverse_iterator<Iterator2>& rhs)
     {
-        return rhs.base() < lhs.base());
+        return rhs.base() < lhs.base();
     }
 
     template <class Iterator1, class Iterator2>

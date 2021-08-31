@@ -16,14 +16,14 @@ namespace ft
     {
         public:
             // ******** MEMBER TYPES ************
-            typedef std::ptrdiff_t difference_type
+            typedef std::ptrdiff_t difference_type;
             typedef T value_type;
             typedef T* pointer;
             typedef T& reference;
             typedef ft::random_access_iterator_tag iterator_category;
 
             // ******** Attribute ***************
-            T* _ptr_current;
+            pointer _ptr_current;
             
             // ********** MEMBER FUNCTIONS ********** 
 
@@ -51,10 +51,9 @@ namespace ft
 
             //____________ Arithmetic operators ('classic')
 
-            iterator_vector& operator+(difference_type n) const
+            iterator_vector operator+(difference_type n) const
             {
-                return _ptr_current + n;
-                //return iterator_vector(_ptr_current + n); 
+                return iterator_vector(_ptr_current + n);
             }
 
             iterator_vector& operator+=(difference_type n) //on modifie egalement current
@@ -69,17 +68,16 @@ namespace ft
                 return *this;
             }           
 
-            iterator_vector& operator++(int)
+            iterator_vector operator++(int)
             {
                 iterator_vector tmp = *this;
-                _ptr_current++;
+                ++(*this);
                 return tmp;
             }
 
-            iterator_vector& operator-(difference_type n) const
+            iterator_vector operator-(difference_type n) const
             {
-                //return iterator_vector(_ptr_current - n);
-                return _ptr_current - n;
+                return iterator_vector(_ptr_current - n);
             }
 
             iterator_vector& operator-=(difference_type n) //on modifie egalement current
@@ -94,10 +92,10 @@ namespace ft
                 return *this;
             }
 
-            iterator_vector& operator--(int)
+            iterator_vector operator--(int)
             {
                 iterator_vector tmp = *this;
-                _current--; 
+                --(*this);
                 return tmp;
             }
        
@@ -150,13 +148,13 @@ namespace ft
             
             //---> Operator + et - // pourquoi member ?
 
-            friend iterator_vector operator+(const difference_type & n, const iterator_vector & rhs)
+            friend iterator_vector operator+(difference_type n, iterator_vector const & rhs)
             {
-                return rhs._ptr_current + n;
+                return iterator_vector(rhs._ptr_current + n);
                 //return iterator_vector(rhs._ptr_current + n)
             }
             
-            friend difference_type operator-(const iterator_vector & lhs, const iterator_vector & rhs)
+            friend difference_type operator-(iterator_vector const & lhs, iterator_vector const & rhs)
             {
                 return lhs._ptr_current - rhs._ptr_current;
             }
@@ -169,14 +167,14 @@ namespace ft
     {
         public:
             // ******** MEMBER TYPES ************
-            typedef std::ptrdiff_t difference_type
+            typedef std::ptrdiff_t difference_type;
             typedef T value_type;
             typedef T* pointer;
             typedef T& reference;
             typedef ft::random_access_iterator_tag iterator_category;
 
             // ******** Attribute ***************
-            T* _ptr_current;
+            pointer _ptr_current;
             
             // ********** MEMBER FUNCTIONS ********** 
 
@@ -184,14 +182,14 @@ namespace ft
            
             iterator_vector_const() {}
 
-            iterator_vector_const(T* data) : _ptr_current(data) {}
+            iterator_vector_const(pointer data) : _ptr_current(data) {}
             
-            iterator_vector_const(const iterator_vector_const& src)
+            iterator_vector_const(iterator_vector_const const & src)
             {
                 *this = src;
             }
   
-            iterator_vector_const(iterator_vector<T>& src) :  _ptr_current(src._ptr_current) {} // capable de construire a partir d'un it non constant 
+            iterator_vector_const(iterator_vector<T> const & src) :  _ptr_current(src._ptr_current) {} // capable de construire a partir d'un it non constant 
             
             iterator_vector_const& operator=(const iterator_vector_const & src)
             {
@@ -206,10 +204,9 @@ namespace ft
 
             //____________ Arithmetic operators ('classic')
 
-            iterator_vector_const& operator+(difference_type n) const
+            iterator_vector_const operator+(difference_type n) const
             {
-                return _ptr_current + n;
-                //return iterator_vector_const(_ptr_current + n); 
+                return iterator_vector_const(_ptr_current + n);
             }
 
             iterator_vector_const& operator+=(difference_type n) //on modifie egalement current
@@ -224,17 +221,16 @@ namespace ft
                 return *this;
             }           
 
-            iterator_vector_const& operator++(int)
+            iterator_vector_const operator++(int)
             {
                 iterator_vector_const tmp = *this;
                 _ptr_current++;
                 return tmp;
             }
 
-            iterator_vector_const& operator-(difference_type n) const
+            iterator_vector_const operator-(difference_type n) const
             {
-                //return iterator_vector_const(_ptr_current - n);
-                return _ptr_current - n;
+                return iterator_vector_const(_ptr_current - n);
             }
 
             iterator_vector_const& operator-=(difference_type n) //on modifie egalement current
@@ -249,10 +245,10 @@ namespace ft
                 return *this;
             }
 
-            iterator_vector_const& operator--(int)
+            iterator_vector_const operator--(int)
             {
                 iterator_vector_const tmp = *this;
-                _current--; 
+                _ptr_current--; 
                 return tmp;
             }
        
@@ -290,25 +286,24 @@ namespace ft
            
             bool operator>(const iterator_vector_const& rhs)
             {
-                return rhs._ptr_ccurent < this->_ptr_current;
+                return rhs._ptr_current < this->_ptr_current;
             }
            
             bool operator<=(const iterator_vector_const& rhs)
             {
-                return !(this->_ptr_ccurent > rhs._ptr_current);
+                return !(this->_ptr_current > rhs._ptr_current);
             }
 
             bool operator>=(const iterator_vector_const& rhs)
             {
-                return !(this->_ptr_ccurent < rhs._ptr_current);
+                return !(this->_ptr_current < rhs._ptr_current);
             }
             
             //---> Operator + et -  // pourquoi member?
 
-            friend iterator_vector_const operator+(const difference_type & n, const iterator_vector_const & rhs)
+            friend iterator_vector_const operator+(difference_type n, const iterator_vector_const & rhs)
             {
-                return rhs._ptr_current + n;
-                //return iterator_vector(rhs._ptr_current + n)
+                return iterator_vector_const(rhs._ptr_current + n);
             }
 
             friend difference_type operator-(const iterator_vector_const & lhs, const iterator_vector_const & rhs)
