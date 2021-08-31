@@ -1,5 +1,5 @@
 NAME= ft_containers
-SRCS= main_lsoulier.cpp common.cpp test_vector.cpp
+SRCS= main_test.cpp common.cpp test_vector.cpp
 OBJS= $(addprefix srcs/, $(SRCS:.cpp=.o))
 CC= clang++
 CFLAGS= -Wall -Wextra -Werror -std=c++98
