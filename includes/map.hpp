@@ -8,11 +8,11 @@
 #include "comparison.hpp"
 #include "enable_if.hpp"
 #include "pair.hpp"
+#include "less.hpp"
 
 namespace ft
 {
-    //LESS A FAIRE
-    template<class Key, class T, class Compare = less<Key>, class Alloc = std::allocator<ft::pair<const Key, T> > >
+    template<class Key, class T, class Compare = ft::less<Key>, class Alloc = std::allocator<ft::pair<const Key, T> > >
     //Alloc corresponds to the type of allocator object that is used to define the storage location model
     
     class map
@@ -23,26 +23,45 @@ namespace ft
             typedef T mapped_type;
             typedef ft::pair<const key_type, mapped_type> value_type;
             typedef Compare key_compare;
-
-           // typedef value_compare  A A FAIRE
-
             typedef Alloc allocator_type;
             typedef typename allocator_type::reference reference;
             typedef typename allocator_type::const_reference const_reference;
             typedef typename allocator_type::pointer pointer;
             typedef typename allocator_type::const_pointer const_pointer;
-        
             typedef iterator_map<T> iterator;
             typedef iterator_map_const<T> const_iterator;
             typedef typename ft::reverse_iterator<iterator> reverse_iterator;
             typedef typename ft::reverse_iterator<const_iterator> const_reverse_iterator;
             typedef typename ft::iterator_traits<iterator>::difference_type difference_type;
             typedef std::size_t size_type;
+	
+            class value_compare
+	    	{
+	    	    protected:
+		        	Compare _comp; 
+                    //constructeur en protected, a voir?
 
+	    	    public:
+		    	    typedef bool result_type;
+			        typedef value_type first_argument_type;
+		    	    typedef value_type second_argument_type;
+
+			        value_compare(Compare c) : _comp(c)
+                    {
+                        return;
+                    }
+
+		    	    bool operator()(value_type const& x, value_type const& y) const
+			        {
+				        return this->comp_(x.first, y.first);
+		    	    }
+		    };
         
         // *********** ATTRIBUTS ***************
         protected:
             allocator_type _allocator;
+            typedef rbt_node<value_type> _rbt_node;
+
             // A FAIRE AVEC RBT
 
         public:

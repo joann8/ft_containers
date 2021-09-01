@@ -9,6 +9,7 @@
 #include <iterator>
 #include <memory> //std::allocator
 #include "iterator_traits.hpp"
+#include "rbt.hpp"
 
 namespace ft
 {
@@ -24,7 +25,7 @@ namespace ft
             typedef ft::bidirectional_iterator_tag iterator_category;
 
             // ******** Attribute ***************
-            rbt_node* ptr; // A definir
+            rbt_node<value_type>* ptr;
             
             // ********** MEMBER FUNCTIONS ********** 
 
@@ -32,7 +33,7 @@ namespace ft
            
             iterator_map() : ptr(NULL) { return;}
 
-            iterator_map(rbt_node* data) : ptr(data) {}
+            iterator_map(rbt_node<value_type>* data) : ptr(data) {}
             
             iterator_map(const iterator_map& src) : ptr(src.ptr)
             {
@@ -59,7 +60,9 @@ namespace ft
 
             iterator_map operator++(int)
             {
-                return ; // A FAIRE
+                iterator_map tmp;
+                ++(*this);
+                return tmp;
             }
 
             iterator_map& operator--()
@@ -69,17 +72,19 @@ namespace ft
 
             iterator_map operator--(int)
             {
-                return ; // A FAIRE
+                iterator_map tmp;
+                --(*this);
+                return tmp;
             }
        
             reference operator*() const
             {
-                return ; // A FAIRE
+                return this->ptr->content;
             }
 
             pointer operator->() const 
             {
-                return ; // A FAIRE
+                return &(this->ptr->content);
             }
 
             ///____________ Relational operators
@@ -108,7 +113,7 @@ namespace ft
             typedef ft::bidirectional_iterator_tag iterator_category;
 
             // ******** Attribute ***************
-            rbt_node* ptr; // A definir
+            rbt_node<value_type>* ptr; // A definir
             
             // ********** MEMBER FUNCTIONS ********** 
 
@@ -116,7 +121,7 @@ namespace ft
            
             iterator_map_const() : ptr(NULL) { return; }
 
-            iterator_map_const(rbt_node* data) : ptr(data) {}
+            iterator_map_const(rbt_node<value_type>* data) : ptr(data) {}
             
             iterator_map_const(iterator_map_const const & src) : ptr(src.ptr)
             {
@@ -145,7 +150,9 @@ namespace ft
 
             iterator_map_const operator++(int)
             {
-                return ; // A FAIRE
+                iterator_map_const tmp;
+                ++(*this);
+                return tmp;
             }
 
             iterator_map_const& operator--()
@@ -155,17 +162,19 @@ namespace ft
 
             iterator_map_const operator--(int)
             {
-                return ; // A FAIRE
+                iterator_map_const tmp;
+                --(*this);
+                return tmp;
             }
        
             reference operator*() const
             {
-                return ; // A FAIRE
+                return this->ptr->content;
             }
 
             pointer operator->() const 
             {
-                return ; // A FAIRE
+                return &(this->ptr->content);
             }
 
             ///____________ Relational operators
