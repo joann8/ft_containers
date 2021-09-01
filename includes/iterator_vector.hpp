@@ -145,7 +145,7 @@ namespace ft
             {
                 return !(this->_ptr_ccurent < rhs._ptr_current);
             }
-            
+    
             //---> Operator + et - // pourquoi member ?
 
             friend iterator_vector operator+(difference_type n, iterator_vector const & rhs)

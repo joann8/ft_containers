@@ -6,7 +6,7 @@
 /*   By: lsoulier <lsoulier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/07 14:48:40 by lsoulier          #+#    #+#             */
-/*   Updated: 2021/08/31 19:14:27 by jacher           ###   ########.fr       */
+/*   Updated: 2021/03/07 14:48:49 by lsoulier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,6 @@ void test_vector_pushpop_back(void) {
 void test_vector_assign(void) {
 	std::cout << std::endl << "Tests for \033[31;1;4massign()\033[0m: " << std::endl;
 	ft::vector<std::string> test_assign1;
-	print_vector_state(test_assign1);
 
 	std::cout << "Let's try assign 21 'roudoudou' on an empty vector: " << std::endl;
 	test_assign1.assign(21, "roudoudou");
@@ -497,12 +496,8 @@ void test_vector() {
 	test_vector_pushpop_back();
 	test_vector_assign();
 	test_vector_frontback();
-
-
-	test_vector_resize(); //en plus
 	test_vector_insert();
 	test_vector_erase();
-
 	test_vector_at();
 	test_vector_operator_bracket();
 	test_vector_clear();

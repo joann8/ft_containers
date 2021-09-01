@@ -8,8 +8,6 @@
 #include "comparison.hpp"
 #include "enable_if.hpp"
 
-#include<stdio.h>
-#include <iostream>
 namespace ft
 {
     template<class T, class Alloc = std::allocator<T> >
@@ -178,14 +176,14 @@ namespace ft
             reference at(size_type n)      
             {
                 if (n >= this->_size || n < 0)
-                    throw std::out_of_range("vector : pbm with n in at");
+                    throw std::out_of_range("*** vector exception - at : n over size ***");
                 return *(this->_array + n);
             }
             
             const_reference at(size_type n) const
             { 
                 if (n >= this->_size || n < 0)
-                    throw std::out_of_range("vector : pbm with n in const_at");
+                    throw std::out_of_range("*** vector exception - const at : n over size ***");
                 return *(this->_array + n);
             }
             
@@ -242,7 +240,6 @@ namespace ft
                 {
                     this->erase(begin() + n, this->end());
                 }
-                //    this->_size = n;
                 else
                 {
                     if (n > this->_capacity)
@@ -260,20 +257,20 @@ namespace ft
             void reserve(size_type n) 
             {
                 if (n > this->max_size())
-                    throw std::length_error("***vector exception : pbm with n in reserve"); 
+                    throw std::length_error("***vector exception - reserve : n over max size***"); 
                 if (n <= this->_capacity)
                     return;
-                pointer old = this->_array;
-                this->_array = this->_allocator.allocate(n);
-                for (pointer it = this->_array, old_it = old, old_ite = old_it + this->_size;
-                        old_it != old_ite; it++, old_it++)
+
+                pointer ptr_new = _allocator.allocate(n);
+                for (size_type i = 0; i < _size; i++)
                 {
-                    this->_allocator.construct(it, *old_it);
-                    this->_allocator.destroy(old_it);
+                    _allocator.construct(ptr_new + i, _array[i]);
+                    _allocator.destroy(_array + i);
                 }
-                this->_allocator.deallocate(old, this->_capacity);
-                this->_capacity = n;
-                
+                if (_capacity != 0)
+                    _allocator.deallocate(_array, _capacity);
+                _capacity = n;
+                _array = ptr_new; 
             }
 
             // --> Modifiers
@@ -293,7 +290,6 @@ namespace ft
 				    this->_capacity = n;
 				    this->_array = this->_allocator.allocate(this->_capacity);
 			    }
-                //this->reserve(n);
                 pointer it = this->_array;
                 while (first != last) //pbm si first < last?
                 {
@@ -314,7 +310,6 @@ namespace ft
 				    this->_capacity = n;
 				    this->_array = this->_allocator.allocate(this->_capacity);
 			    }
-                //this->reserve(n);
                 for(size_type i = 0; i < n; i++)  
                 {
                     this->_allocator.construct(this->_array + i, val);
@@ -334,49 +329,15 @@ namespace ft
 
             iterator insert(iterator position, const value_type& val)
             {
-                if (this->_size + 1 > this->_capacity)
-                    this->reserve(this->_capacity == 0 ? 1 : this->_capacity * 2); //on double la capacité pour ne pas reallouer à chaque ajouter
-                
-                difference_type elmt = position._ptr_current - this->_array;
-                difference_type index = position._ptr_current - this->_array;
-
-                position = iterator(this->_array + index);
+                difference_type elmt = position._ptr_current - this->_array; // important car apres reserve, iterator plus bon!!
                 this->insert(position, 1, val);
-
-                /*
-                std::cout << "emlt : " << elmt << std::endl;                
-
-                if (!this->empty())
-                {
-                      printf("enter if\n");
-                    for(difference_type i = this->_size; i > elmt; i--) 
-                     {
-                        this->_allocator.construct(this->_array + i, *(this->_array + i - 1));
-                        this->_allocator.destroy(this->_array + i - 1);
-                     }*/
-                    /*for(pointer it = this->_array + this->_size, ite = this->_array + elmt; it > ite; it--) 
-                     {
-                        this->_allocator.construct(it, *(it - 1));
-                        this->_allocator.destroy(it - 1);
-                     }*/
-                /*
-                }
-                std::cout << "capacity : " << this->_capacity << std::endl;
-                std::cout << "size : " << this->_size << std::endl;
-                std::cout << "emlt : " << elmt << std::endl;
-
-                this->_size++;
-                printf("size ok\n");
-
-                this->_allocator.construct(this->_array + elmt, val);
-                                printf("PBM solved\n");
-                */
-
-                return iterator(this->_array + elmt);
+                return iterator(this->begin() + elmt);
             }
             
-            void insert(iterator position, size_type n, const value_type&val)
+            void insert(iterator position, size_type n, const value_type& val)
             {
+                difference_type elmt = position._ptr_current - this->_array; // important car apres reserve, iterator plus bon!!
+
                 if (n == 0)
                     return;
                 if (this->_size + n > this->_capacity)
@@ -386,10 +347,6 @@ namespace ft
                      else
                         this->reserve(this->_capacity * 2);
                 }
-
-                difference_type elmt = position._ptr_current - this->_array;
-                std::cout << "elmt =" << elmt << std::endl;
-
 
                 for(pointer it = this->_array + this->_size + n - 1, ite = this->_array + elmt + n - 1; it != ite; it--) 
                 {
@@ -444,16 +401,14 @@ namespace ft
             {
                 if (this->empty() || position == this->end())
                     return this->end();
-
-                size_type elmt = position- this->_array;
                 this->_allocator.destroy(position._ptr_current);
-                for(size_type i = elmt; i < this->_size; i++) //++it?
+                for(pointer it = position._ptr_current, ite = this->end()._ptr_current - 1; it != ite; it++) //++it?
                 {
-                    this->_allocator.construct(this->_array + i, *(this->_array + i + 1));
-                    this->_allocator.destroy(this->_array + i + 1);
+                    this->_allocator.construct(it, *(it + 1));
+                    this->_allocator.destroy(it + 1);
                 }
                 this->_size--;
-                return iterator(this->_array + elmt);
+                return position;
             }
 
             iterator erase(iterator first, iterator last)

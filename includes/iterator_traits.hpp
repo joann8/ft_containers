@@ -27,7 +27,7 @@ namespace ft
         typedef T value_type;
         typedef T* pointer;
         typedef T& reference;
-        typedef ft::random_access_iterator_tag iterator_category; // A CHECKER, must be one of the 5 tags 
+        typedef ft::random_access_iterator_tag iterator_category; // must be one of the 5 tags 
     };
 
     template <class T>
@@ -37,7 +37,7 @@ namespace ft
         typedef T value_type;
         typedef T const* pointer;
         typedef T const& reference;
-        typedef ft::random_access_iterator_tag iterator_category; // A CHECKER
+        typedef ft::random_access_iterator_tag iterator_category;
     };
 }
 
