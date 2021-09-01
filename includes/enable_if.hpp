@@ -1,3 +1,5 @@
+//reimplementation of enable_if and is_integral
+
 #ifndef ENABLE_IF_HPP
 
 #define ENABLE_IF_HPP

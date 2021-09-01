@@ -33,7 +33,7 @@ namespace ft
 
             iterator_vector(T* data) : _ptr_current(data) {}
             
-            iterator_vector(const iterator_vector& src)
+            iterator_vector(const iterator_vector& src) : _ptr_current(src._ptr_current)
             {
                 *this = src;
             }
