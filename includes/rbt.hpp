@@ -19,7 +19,6 @@ namespace ft
     {
         public:
 
-        // Attributs
         T content;
         bool is_red;
         rbt_node* parent;
@@ -27,6 +26,11 @@ namespace ft
         rbt_node* right;
 
         rbt_node() : is_red(true), parent(NULL), left(NULL), right(NULL)
+        {
+            return;
+        }
+        
+        rbt_node(T content) : content(content), is_red(true), parent(NULL), left(NULL), right(NULL)
         {
             return;
         }
@@ -66,6 +70,16 @@ namespace ft
                 return grand_parent->left;
         }
 
+        rbt_node* getSibling() const
+        {
+            if (parent == NULL)
+                return NULL;
+            if (parent->left == this)
+                return parent->right;
+            else
+                return parent->left;
+        }
+
         rbt_node* getMinChild() const
         {
             rbt_node* min_child = this->left;
@@ -81,11 +95,7 @@ namespace ft
                 max_child = max_child->right;
             return max_child;
         }
-
     };
-
 }
-
-
 
 #endif
