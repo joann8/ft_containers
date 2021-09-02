@@ -34,6 +34,7 @@ namespace ft
             typedef typename ft::reverse_iterator<const_iterator> const_reverse_iterator;
             typedef typename ft::iterator_traits<iterator>::difference_type difference_type;
             typedef std::size_t size_type;
+            
 	
             class value_compare
 	    	{
@@ -59,8 +60,18 @@ namespace ft
         
         // *********** ATTRIBUTS ***************
         protected:
+            // A revoir
+            typedef rbt_node<value_type> rbt_node;
+            typedef typename allocator_type::template  rebind<rbt_node>::other node_allocator_type;
+
+            key_compare _comp;
             allocator_type _allocator;
-            typedef rbt_node<value_type> _rbt_node;
+            rbt_node* _root;
+            rbt_node* _end;
+            rbt_node* _node;
+            node_allocator_type _allocator;
+            size_type _size;
+
 
             // A FAIRE AVEC RBT
 
@@ -92,42 +103,54 @@ namespace ft
 
             iterator begin()
             {
-               // A FAIRE
+                rbt_node* tmp = _root;
+                while (tmp->left)
+                    tmp = tmp->left;
+                return iterator(tmp);
             }
 
             const_iterator begin() const
             {
-               // A FAIRE
+                rbt_node* tmp = _root;
+                while (tmp->left)
+                    tmp = tmp->left;
+                return const_iterator(tmp);
             }
 
             iterator end()
             {
-               // A FAIRE
+                rbt_node* tmp = _root;
+                while (tmp->right)
+                    tmp = tmp->right;
+                return iterator(tmp); // pas sure
             }
 
             const_iterator end() const
             {
-               // A FAIRE
+                rbt_node* tmp = _root;
+                while (tmp->right)
+                    tmp = tmp->right;
+                return const_iterator(tmp); // pas sure
             }
 
             reverse_iterator rbegin()
             {
-               // A FAIRE
+               return reverse_iterator(end());
             }
             
             const_reverse_iterator rbegin() const
             {
-               // A FAIRE
+               return const_reverse_iterator(end());
             }
             
             reverse_iterator rend() 
             {
-               // A FAIRE
+               return reverse_iterator(begin()));
             }
             
             const_reverse_iterator rend() const
             {
-               // A FAIRE
+               return const_reverse_iterator(begin());
             }
         
             //---> Elements Access
@@ -148,12 +171,12 @@ namespace ft
 
             bool empty() const
             {
-                // A FAIRE
+                return (this->_size == 0 ? true : false);
             }
 
             size_type size() const
             {
-                // A FAIRE
+                return this->_size;
             }
 
             size_type max_size() const
