@@ -69,7 +69,7 @@ namespace ft
             rbt_node* _root;
             rbt_node* _end;
             rbt_node* _node;
-            rbt_node* leaf;
+            rbt_node* _null_node;
             node_allocator_type _node_allocator;
             size_type _size;
 
@@ -246,15 +246,30 @@ namespace ft
             {
                 rbt_node* new_node = _node_allocator.allocate(1);
                 _allocator.construct(&new_node->content, data);
-                new_node->left = leaf;
-                new_node->right = leaf;
+                new_node->left = rbt_create_null_node();
+                new_node->left->parent = new_node;
+                new_node->right = rbt_create_null_node();
+                new_node->right->parent = new_node;
                 new_node->parent = NULL;
+                new_node->is_null = false;
+                return new_node;
+            }
+
+            rbt_node* rbt_create_null_node()
+            {
+                rbt_node* new_node = _node_allocator.allocate(1);
+                new_node->left = NULL;
+                new_node->right = NULL;
+                new_node->parent = NULL;
+                new_node->is_red = false;
+                new_node->is_null = true;
                 return new_node;
             }
 
             void rbt_free_node(rbt_node *node)
             {
-                _node_allocator.destroy(&node->content);
+                if (node->is_null == false)
+                    _node_allocator.destroy(&node->content);
                 _node_allocator.deallocate(node, 1);
             }
 
@@ -280,7 +295,7 @@ namespace ft
                 {
                     rbt_node* tmp = _root;
                     bool is_left_child;
-                    while (tmp)
+                    while (tmp && tmp->is_null == false)
                     {
                         new_node->parent = tmp;
                         if (_comp(tmp->content.first, new_node->content.first) == true) // si new_node est plus grand
@@ -299,17 +314,24 @@ namespace ft
                             return;
                         }
                     }
-                    tmp = new_node;
+
                     if (is_left_child == 1)
-                        new_node->parent->left = tmp;
+                    {
+                        tmp->parent->left = new_node;
+                        new_node->parent = tmp;
+                    }
                     else
-                        new_node->parent->right = tmp;
-                    rbt_fix_violation(new_node);
+                    {
+                        tmp->parent->right = new_node;
+                        new_node->parent = tmp->parent;
+                    }
+                    rbt_free_node(tmp);
+                    rbt_insert_fix_violation(new_node);
                     return;
                 }
             }
 
-            void rbt_fix_violation(rbt_node *node)
+            void rbt_insert_fix_violation(rbt_node *node)
             {
                 if (node != _root)
                 {
@@ -330,159 +352,276 @@ namespace ft
 
                         else // !uncle || uncle->is_red == false // 4 cases
                         {                        
-                            //Left Left ==> Line on left, 2 rotation to right
+                            //Left Left Case==> Line on left, right rotation of grandfather
                             if (node == node->parent->left && node->parent == grand_parent->left)
-                                rbt_rotate_right_right(node->parent, grand_parent);
+                            {
+                                rbt_rotate_right(grand_parent);
+                                grand_parent->is_red = true;
+                                parent->is_red = false;
+                            }
 
-                            //Left Right  ==> triangle <
+                            //Left Right  ==> triangle < : left rotation of parent then right rotation of grand father
                             else if (node == node->parent->right && node->parent == grand_parent->left)
-                                rbt_rotate_left_right(node, node->parent);
+                            {
+                                rbt_rotate_left(node->parent);
+                                rbt_rotate_right(grand_parent);
+                                grand_parent->is_red = true;
+                                parent->is_red = false;
+                            }
 
-                            // Right Right  ==> line on right, 2 rotations to left
+                            // Right Right  ==> line on right, left rotation of grand father
                             else if (node == node->parent->right && node->parent == grand_parent->right)
-                                rbt_rotate_left_left(node, node->parent);
+                            {
+                                rbt_rotate_left(grand_parent);
+                                grand_parent->is_red = true;
+                                parent->is_red = false;
+                            }
 
                             // Right Left Case ==> triangle >
                             else if (node == node->parent->left && node->parent == grand_parent->right)
-                                rbt_rotate_right_left(node, node->parent);
+                            {
+                                rbt_rotate_right(node->parent);
+                                rbt_rotate_left(grand_parent);
+                                grand_parent->is_red = true;
+                                parent->is_red = false;
+                            }
                         }
                     }
                }
             }
 
-            void rbt_rotate_left_left(rbt_node* parent, rbdt_node* grand_parent)
+            void rbt_rotate_right(rbt_node* node)//parent, rbdt_node* grand_parent)
             {
-                rbt_node* tmp_parent_left = parent->left;
+                rbt_node* tmp = node->left->right;
 
-                parent->parent = grand_parent->parent;
-                parent->left = grand_parent;
-                if (grand_parent ==_root)
-                    _root = parent;
+                if (node->parent && node == node->parent->left)
+                    node->parent->left = node->left;
+                else if (node->parent && node == node->parent->right)
+                    node->parent->right = node->left;
+                node->left->parent = node->parent;
+
+                node->left->right = node;
+                node->parent = node->left;
                 
-                grand_parent->parent = parent;
-                grand_parent->right = tmp_parent_left;
-                
-                grand_parent->is_red = true;
-                parent->is_red = false;
+                node->left = tmp;
+                node->left->parent = node;
+
+                if (node ==_root)
+                    _root = node->parent;
             }
 
-            void rbt_rotate_right_right(rbt_node* parent, rbdt_node* grand_parent)
+            void rbt_rotate_left(rbt_node* node)
             {
-                rbt_node* tmp_parent_right = parent->right;
+                rbt_node* tmp = node->right->left;
 
-                parent->parent = grand_parent->parent;
-                parent->right = grand_parent;
-                if (grand_parent ==_root)
-                    _root = parent;
+                if (node->parent && node == node->parent->left)
+                    node->parent->left = node->right;
+                else if (node->parent && node == node->parent->right)
+                    node->parent->right = node->right;
+                node->right->parent = node->parent;
+
+                node->right->left = node;
+                node->parent = node->right;
                 
-                grand_parent->parent = parent;
-                grand_parent->left = tmp_parent_right;
+                node->right = tmp;
+                node->right->parent = node;
 
-                grand_parent->is_red = true;
-                parent->is_red = false;
-            }
-
-          void rbt_rotate_left_right(rbt_node* node, rbdt_node* parent)
-            {
-                rbt_node* tmp_node_left = node->left;
-
-                node->left = parent;
-                node->parent = parent->parent;
-
-                parent->parent->left = node;
-
-                parent->right = tmp_node_left;
-                parent->parent = node;
-
-                rbt_rotate_right_right(node, node->parent);
-            }
-
-            void rbt_rotate_right_left(rbt_node* node, rbdt_node* parent)
-            {
-                rbt_node* tmp_node_right = node->right;
-
-                node->right = parent;
-                node->parent = parent->parent;
-
-                parent->parent->right = node;
-
-                parent->left = tmp_node_right;
-                parent->parent = node;
-
-                rbt_rotate_left_left(node, node->parent);
+                if (node ==_root)
+                    _root = node->parent;
             }
 
             void rbt_delete(rbt_node *node)
             {
                 rbt_node* to_delete = rbt_search(_root, node);
+                rbt_node* replacement;
+
                 if (to_delete == NULL)
                     return;
                 
-                bool original_is_red = to_delete->is_red;
-
-                if (to_delete->left && to_delete->right == NULL )
+                //Initital steps --> convert to a 0 or 1 child case 
+                if (to_delete->left->is_null == false && to_delete->right->is_null == false)
                 {
-                    if (to_delete ==_root)
-                    {
-                        _root = to_delete->left;
-                        to_delete->left->parent = NULL;
-                    }
-                    else if (to_delete == to_delete->parent->left)
-                    {
-                        to_delete->parent->left = to_delete->left;
-                        to_delete->left->parent = to_delete->parent;
-                    } 
-                    else
-                    {
-                        to_delete->parent->right = to_delete->left;
-                        to_delete->left->parent = to_delete->parent;
-                    }
-                     if (original_is_red == true || to_delete->left->is_red == true)
-                    {
-                         to_delete->left->is_red = false;
-                         rbt_free_node(to_delete);
-                         return;
-                    }
-                    else // 2 blacks
-                        //Fixe couleur
-                }
-               
-                else if (to_delete->right && to_delete->left == NULL)
-                {
-                    if (to_delete == _root)
-                    {
-                        _root = to_delete->right;
-                        to_delete->right->parent = NULL;
-                    }
-                    else if (to_delete == to_delete->parent->left)
-                    {
-                        to_delete->parent->left = to_delete->right;
-                        to_delete->right->parent = to_delete->parent;
-                        if (to_delete->right->is_red == true)
-                            to_delete->right->is_red = false;
-                    } 
-                    else
-                    {
-                        to_delete->parent->right = to_delete->right;
-                        to_delete->right->parent = to_delete->parent;
-                    }
-                    if (original_is_red == true || to_delete->right->is_red == true)
-                    {
-                         to_delete->right->is_red = false;
-                         rbt_free_node(to_delete);
-                         return;
-                    }
-                    else // 2 blacks
-                        //Fixe couleur
-                    rbt_free_node(to_delete);
+                    replacement = to_delete;
+                    to_delete = to_delete->right->getMinChild();
+                    replacement->content = copy(to_delete); // A FAIRE
                 }
                 
+                bool original_is_red = to_delete->is_red;
+
+                if (to_delete->left->is_null == true && to_delete->right->is_null == true)
+                {
+                    replacement = to_delete->right;
+                    rbt_delete_case1(to_delete);
+                    rbt_free_node(to_delete->left);
+
+                }
+                else if (to_delete->left->is_null == false)
+                {
+                    replacement = to_delete->left;
+                    rbt_delete_case2(to_delete, to_delete->left)
+                    rbt_free_node(to_delete->right);
+
+                }
+                else if (to_delete->right->is_null == false)
+                {
+                    replacement = to_delete->right;
+                    rbt_delete_case2(to_delete, to_delete->right)
+                    rbt_free_node(to_delete->left);
+                }
+               
+                rbt_free_node(to_delete);
+                
+                if (_root != NULL)
+                    rbt_delete_fix_violation(original_is_red, replacement); 
+            }
+        
+            //Node to delete has two NULL children
+            void rbt_delete_case1(rbt_node *to_delete, rbt_node *child)
+            {
+                if (to_delete ==_root)
+                {
+                    _root = rbt_create_null_node();;
+                }
+                else if (to_delete == to_delete->parent->left)
+                {
+                    to_delete->parent->left = child;
+                    child->parent = to_delete->parent;
+                }
+                else
+                {
+                    to_delete->parent->right = child;
+                    child->parent = to_delete->parent;
+                }
+            }
+            
+            //Node to delete has one NULL children
+            void rbt_delete_case2(rbt_node *to_delete, rbt_node* child)
+            {
+                child->parent = to_delete->parent;
+                if (to_delete == _root)
+                    _root = child;
+                else if (to_delete == to_delete->parent->left)
+                    to_delete->parent->left = child;
+                else
+                    to_delete->parent->right = child;
+                child->parent = to_delete->parent;
+
             }
 
+            void rbt_delete_fix_violation(bool original_is_red, rbt_node* replacement)
+            {
+                if (original_is_red == true || replacement->is_red == true)
+                {
+                    replacement->is_red == false;
+                    return;
+                }
+                else //node deleted equal to double black
+                {
+                    rbt_double_black_solve(replacement);
+                }
+            }
+            
+            void double_black_solve(rbt_node* replacement)
+            {
+                rbt_node* sibling;
+                rbt_node* tmp;
+
+                if (replacement->parent) // to avoid root
+                {
+                    if (replacement == replacement->parent->left)
+                        sibling = replacement->parent->right;
+                    else 
+                        sibling = replacement->parent->left;
+                }
+
+                //case 1 --> terminate case      
+                if (replacement == _root)
+                {
+                    replacement->is_red = false;
+                    return;
+                }
+
+                //case 2 (mirror) 
+                else if (replacement->parent->is_red == false
+                        sibling->is_red == true
+                        sibling->left->is_red == false
+                        sibling->right->is_red == false)
+                {
+                    if (sibling == replacement->parent->right)
+                    {
+                        sibling->is_red = false;
+                        replacement->parent->is_red = true;
+                        rbt_rotate_left(replacement->parent);
+                        double_black_solve(replacement);
+                    }
+                   // else
+
+
+                }
+                //case 3 (mirror)
+                else if (replacement->parent->_is_red == false
+                            && sibling->is_red == false
+                            && sibling->left->is_red == false
+                            && sibling->right->is_red == false)
+                {
+                    //works for both mirror
+                    sibling->is_red == true;
+                    double_black_solve(replacement->parent);
+                }
+                
+                //case 4 (mirror) --> terminate case
+                else if (replacement->parent->is_red == true
+                            && sibling->is_red == false
+                            && sibling->left->is_red == false 
+                            && sibling->right->is_red == false)
+                {
+                    //works for both mirror
+                    replacement->parent->is_red = false;
+                    sibling->is_red == true;
+                    return;
+                }
+
+                //case 5   
+                else if (replacement->parent->is_red == false 
+                            && sibling->is_red == false
+                            && siblling->left->is_red == true
+                            && sibling->right->is_red == false)
+                {
+                    sibling->left->is_red == false;
+                    sibling->is_red = true;
+                    rbt_rotate_right(sibling);
+                    double_black_solve(replacement):
+                }
+
+                //case 6 (mirror)--> terminate case      
+                 else if (sibling->is_red == false
+                            && sibling->right->is_red == true)
+                {
+                    if (sibling == replacement->parent->right)
+                    {
+                        sibling->is_red = replacement->parent->is_red;
+                        replacement->parent->is_red = false;
+                        sibling->right->is_red = false;
+                        rbt_rotate_left(replacement->parent);
+                    }
+                    else // to redefine
+                    {
+                        //
+                        rbt_rotate_right(replacement->parent);
+                        //
+                    }
+
+                    return;
+                }
+
+
+
+            }
+            
 
             rbt_node* rbt_search(rbt_node* src, rbt_node* node)
             {
-                if (src && node) 
+                if (src && node && node->is_null == false) 
                 {
                     if (this->comp(src->content.first, node->content.first) == false)
                     {
