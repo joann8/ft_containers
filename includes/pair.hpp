@@ -22,7 +22,7 @@ namespace ft
             pair() : first(), second() { return; }
 
             template <class U, class V>
-            pair (const pair< U, V>& src) : first(src._first), second(src._second)
+            pair (const pair< U, V>& src) : first(src.first), second(src.second)
             {       
                 return;
             }

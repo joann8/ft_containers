@@ -57,10 +57,10 @@ namespace ft
                 rbt_node* current = ptr;
                 rbt_node* res;
                 if (current->right) // si j'ai un fils droit, je cherche la valeur min dans cette branche
-                    res = current->right.findMinChild();
+                    res = current->right.getMinChild();
                 else
                 {
-                    rbt_node* current_parent = curent->parent;
+                    rbt_node* current_parent = current->parent;
                     while (current_parent && current == current_parent->right) // tant que je suis un fils droit
                     {
                         current = current_parent;
@@ -85,10 +85,10 @@ namespace ft
                 rbt_node* current = ptr;
                 rbt_node* res;
                 if (current->left) // si j'ai un fils gauche, je cherche la valeur max dans cette branche
-                    res = current->left.findMaxChild();
+                    res = current->left.getMaxChild();
                 else
                 {
-                    rbt_node* current_parent = curent->parent;
+                    rbt_node* current_parent = current->parent;
                     while (current_parent && current == current_parent->left) // tant que je suis un fils gauche
                     {
                         current = current_parent;
@@ -179,10 +179,10 @@ namespace ft
                 rbt_node* current = ptr;
                 rbt_node* res;
                 if (current->right) // si j'ai un fils droit, je cherche la valeur min dans cette branche
-                    res = current->right.findMinChild();
+                    res = current->right.getMinChild();
                 else
                 {
-                    rbt_node* current_parent = curent->parent;
+                    rbt_node* current_parent = current->parent;
                     while (current_parent && current == current_parent->right) // tant que je suis un fils droit
                     {
                         current = current_parent;
@@ -206,10 +206,10 @@ namespace ft
                 rbt_node* current = ptr;
                 rbt_node* res;
                 if (current->left) // si j'ai un fils gauche, je cherche la valeur max dans cette branche
-                    res = current->left.findMaxChild();
+                    res = current->left.getMaxChild();
                 else
                 {
-                    rbt_node* current_parent = curent->parent;
+                    rbt_node* current_parent = current->parent;
                     while (current_parent && current == current_parent->left) // tant que je suis un fils gauche
                     {
                         current = current_parent;
