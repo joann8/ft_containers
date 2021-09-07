@@ -7,6 +7,8 @@
 #include "iterator_vector.hpp"
 #include "comparison.hpp"
 #include "enable_if.hpp"
+#include <iostream>
+#include <sstream>
 
 namespace ft
 {
@@ -31,7 +33,8 @@ namespace ft
        
             typedef typename ft::reverse_iterator<iterator> reverse_iterator;
             typedef typename ft::reverse_iterator<const_iterator> const_reverse_iterator;
-            typedef typename ft::iterator_traits<iterator>::difference_type difference_type;
+           // typedef typename ft::iterator_traits<iterator>::difference_type difference_type;
+            typedef std::ptrdiff_t difference_type;
             typedef std::size_t size_type;
 
         
@@ -68,7 +71,7 @@ namespace ft
                 return;
             }
 
-            // 3. Range : constructs a container with as many elmts as the ranfe [first, last)
+            // 3. Range : constructs a container with as many elmts as the range [first, last)
             // (each elmt constructed from its corresponding elmt in that range, same order)
            template <class InputOperator>
            vector(InputOperator first, InputOperator last, const allocator_type & alloc = allocator_type(),
@@ -90,23 +93,24 @@ namespace ft
                     first++;
                 }
                 return;
-                // !!! Trow an exception when the range is not valid???
             }
            
             // 4.  Copy 
             vector(vector const & src) :
-            _allocator(src._allocator), _capacity(src._capacity), _size(src._size), _array(this->_allocator.allocate(this->_capacity))
+            _allocator(src._allocator), _capacity(src._size), _size(src._size), _array(this->_allocator.allocate(this->_capacity))
             {
-                for (size_type i = 0; i < src._size; i++) 
+                for (size_type i = 0, size = src._size; i < size; i++)
                 {
                     this->_allocator.construct(this->_array + i, src._array[i]);
                 }
+                return;
             }
 
             virtual ~vector(void)
             {
                 this->clear();
-                this->_allocator.deallocate(this->_array, this->_capacity);
+                if (_capacity != 0)
+                    this->_allocator.deallocate(this->_array, this->_capacity);
             }
             
             vector & operator=(vector const & src)
@@ -117,7 +121,7 @@ namespace ft
                     if (this->_capacity < src._size)
                     {
                         this->_allocator.deallocate(this->_array, this->_capacity);
-                        this->_capacity = src._capacity;
+                        this->_capacity = src._size;
                         this->_array = this->_allocator.allocate(this->_capacity);
                     }
                     this->_size = src._size;
@@ -153,75 +157,89 @@ namespace ft
 
             reverse_iterator rbegin()
             {
-                return reverse_iterator(this->_array + this->_size);
+                return reverse_iterator(end());
             }
             
             const_reverse_iterator rbegin() const
             {
-                return const_reverse_iterator(this->_array + this->_size);
+                return const_reverse_iterator(end());
             }
             
             reverse_iterator rend() 
             {
-                return reverse_iterator(this->_array);
+                return reverse_iterator(begin());
             }
             
             const_reverse_iterator rend() const
             {
-                return const_reverse_iterator(this->_array);
+                return const_reverse_iterator(begin());
             }
         
             //---> Elements Access
             
+            reference operator[] (size_type n) // no check is performed according to def 
+            {
+                return this->_array[n];
+            }
+            
+            const_reference operator[] (size_type n) const // no check is performed according to def
+            { 
+                return this->_array[n];
+            }
+
             reference at(size_type n)      
             {
                 if (n >= this->_size || n < 0)
-                    throw std::out_of_range("*** vector exception - at : n over size ***");
-                return *(this->_array + n);
+                {
+                    std::ostringstream oss;
+				    oss << "vector::_M_range_check: __n (which is " << n << ") >= this->size() (which is " << this->_size << ")";
+                    throw std::out_of_range(oss.str());
+                }
+                return this->_array[n];
             }
             
             const_reference at(size_type n) const
             { 
                 if (n >= this->_size || n < 0)
-                    throw std::out_of_range("*** vector exception - const at : n over size ***");
-                return *(this->_array + n);
-            }
-            
-            reference operator[] (size_type n) // no check is performed according to def 
-            {
-                return *(this->_array + n);
-            }
-            
-            const_reference operator[] (size_type n) const // no check is performed according to def
-            { 
-                return *(this->_array + n);
+                {
+                    std::ostringstream oss;
+				    oss << "vector::_M_range_check: __n (which is " << n << ") >= this->size() (which is s" << this->_size << ")";
+                    throw std::out_of_range(oss.str());
+                }
+                return this->_array[n];
             }
  
             reference front()      
             {
-                return *this->_array;
+                return this->_array[0];
             }
             
             const_reference front() const
             { 
-                return *this->_array;
+                return this->_array[0];
             }
 
             reference back()      
             {
-                return *(this->_array + this->_size - 1);
+                if (_size == 0)
+                    return _array[0];
+                else
+                    return _array[this->_size - 1];
             }
             
             const_reference back() const
             { 
-                return *(this->_array + this->_size - 1);
+                if (_size == 0)
+                    return _array[0];
+                else
+                   return _array[this->_size - 1];
             }
 
             //---> Capacity
 
             bool empty() const
             {
-                return (this->_size <= 0? true : false);
+                return (this->_size == 0? true : false);
             }
 
             size_type size() const
@@ -238,12 +256,11 @@ namespace ft
             {
                 if (n < this->_size)
                 {
-                    this->erase(begin() + n, this->end());
+                    this->_size = n;
                 }
                 else
                 {
-                    if (n > this->_capacity)
-                        reserve(n);
+                
                     this->insert(this->end(), n - this->_size, val);
                 }
                 return;
@@ -319,6 +336,8 @@ namespace ft
 
             void clear()
             {
+                if (this->empty())
+                    return;
                 for (size_type i = 0, size = this->_size; i < size; i++) //++i?
                 {
                     this->_allocator.destroy(this->_array + i);
@@ -340,15 +359,12 @@ namespace ft
 
                 if (n == 0)
                     return;
-                if (this->_size + n > this->_capacity)
-                {
-                    if (this->_capacity * 2 < this->_size + n) // cas 0 fonctionne aussi
-                        this->reserve(this->_size + n);
-                     else
-                        this->reserve(this->_capacity * 2);
-                }
+                if (this->_size + n > this->_size * 2)
+                    this->reserve(this->_size + n);
+                else if (this->_size + n > this->_capacity)
+                    this->reserve(this->_size * 2);
 
-                for(pointer it = this->_array + this->_size + n - 1, ite = this->_array + elmt + n - 1; it != ite; it--) 
+                for(pointer it = this->_array + this->_size + n - 1, ite = this->_array + elmt + n - 1; it != ite; --it) 
                 {
                     this->_allocator.construct(it, *(it - n));
                     this->_allocator.destroy(it - n);
@@ -368,19 +384,16 @@ namespace ft
             {
                 if (first == last)
                     return;
+                
+                difference_type elmt = position._ptr_current - this->_array;
 
                 size_type n = 0;
                 for (InputIterator it = first; it != last; it++)
                     n++;
-                if (this->_size + n > this->_capacity)
-                {
-                    if (this->_capacity * 2 < this->_size + n) // cas 0 fonctionne aussi
-                        this->reserve(this->_size + n);
-                     else
-                        this->reserve(this->_capacity * 2);
-                }
-
-                difference_type elmt = position._ptr_current - this->_array;
+                if (this->_size + n > this->_size * 2)
+                    this->reserve(this->_size + n);
+                else if (this->_size + n > this->_capacity)
+                    this->reserve(this->_size * 2);
 
                 for(pointer it = this->_array + this->_size + n - 1, ite = this->_array + elmt + n - 1; it != ite; it--) 
                 {

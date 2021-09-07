@@ -16,13 +16,13 @@ namespace ft
             // ********** MEMBER TYPES ********** 
             // inherited from iterator_traits + add iterator_type
 
-            typedef Iterator iterator_type;
+            typedef Iterator iterator_type;           
             typedef typename iterator_traits<Iterator>::difference_type difference_type;            
             typedef typename iterator_traits<Iterator>::value_type value_type;
             typedef typename iterator_traits<Iterator>::pointer pointer;
             typedef typename iterator_traits<Iterator>::reference reference;
             typedef typename iterator_traits<Iterator>::iterator_category iterator_category; 
-
+            
             
             // ********** MEMBER FUNCTIONS ********** 
 
@@ -76,6 +76,7 @@ namespace ft
             {
                 reverse_iterator tmp = *this;
                 ++(*this);
+                //_current--;
                 return tmp;
             }
 
@@ -100,12 +101,13 @@ namespace ft
             {
                 reverse_iterator tmp = *this;
                 --(*this);
+               // _current++;
                 return tmp;
             }
        
             reference operator*() const // A RECHECKER retour function
             {
-                iterator_type tmp = _current;
+                iterator_type tmp(_current);
                 tmp--;
                 return *tmp; //return a reference to the element previous to current
             }
@@ -137,31 +139,31 @@ namespace ft
     template <class Iterator1, class Iterator2>
     bool operator!=(const reverse_iterator<Iterator1>& lhs, const reverse_iterator<Iterator2>& rhs)
     {
-        return !(lhs.base() == rhs.base());
+        return lhs.base() != rhs.base();
     }
     
     template <class Iterator1, class Iterator2>
     bool operator<(const reverse_iterator<Iterator1>& lhs, const reverse_iterator<Iterator2>& rhs)
     {
-        return lhs.base() < rhs.base();
+        return lhs.base() > rhs.base();
     }
     
     template <class Iterator1, class Iterator2>
     bool operator>(const reverse_iterator<Iterator1>& lhs, const reverse_iterator<Iterator2>& rhs)
     {
-        return rhs.base() < lhs.base();
+        return lhs.base() < rhs.base();
     }
 
     template <class Iterator1, class Iterator2>
     bool operator<=(const reverse_iterator<Iterator1>& lhs, const reverse_iterator<Iterator2>& rhs)
     {
-        return !(lhs.base() > rhs.base());
+        return lhs.base() >= rhs.base();
     }
 
     template <class Iterator1, class Iterator2>
     bool operator>=(const reverse_iterator<Iterator1>& lhs, const reverse_iterator<Iterator2>& rhs)
     {
-        return !(lhs.base() < rhs.base());
+        return lhs.base() <= rhs.base();
     }
 
     //---> Operator + et - ===> A RECHECKER LES retours des functions
@@ -169,7 +171,7 @@ namespace ft
     template <class Iterator>
     reverse_iterator<Iterator> operator+ (typename reverse_iterator<Iterator>::difference_type n, const reverse_iterator<Iterator>& it)
     {
-        return reverse_iterator<Iterator>(it.base() -n);
+        return it + n;
     }
 
     template <class Iterator1, class Iterator2>

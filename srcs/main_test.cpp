@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main_lsoulier.cpp                                  :+:      :+:    :+:   */
+/*   main_test.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lsoulier <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/19 13:15:20 by lsoulier          #+#    #+#             */
-/*   Updated: 2021/08/31 09:20:37 by jacher           ###   ########.fr       */
+/*   Updated: 2021/09/07 17:01:55 by jacher           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,12 @@
 #include <string>
 //#include "test_queue.hpp"
 #include "test_vector.hpp"
-#include "test_map.hpp"
+//#include "test_map.hpp"
 
 int main(int argc, char **argv) 
 {
-	std::string containers[2] = {"vector", "map"};
-	void (*test_functions[2])(void) = {&test_vector, &test_map};
+	std::string containers[2] = {"vector"};//, "map"};
+	void (*test_functions[2])(void) = {&test_vector};//, &test_map};
 
 	if(argc != 2) 
 	{
@@ -27,7 +27,7 @@ int main(int argc, char **argv)
 	} 
 	else 
 	{
-		for(size_t i = 0; i < 2; i++) 
+		for(size_t i = 0; i < 1; i++) 
 		{
 			if (argv[1] == containers[i]) 
 			{

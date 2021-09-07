@@ -1,5 +1,7 @@
 // CLASS for Vector Iterator and Const Vector Iterator 
 // Quelques calculs a revoir peut être
+// Tag utilisé = random access
+// Random-access iterators are iterators that can be used to access elements at an arbitrary offset position relative to the element they point to, offering the same functionality as pointers.
 
 #ifndef ITERATOR_VECTOR_HPP
 
@@ -11,6 +13,9 @@
 
 namespace ft
 {
+    template <class T>
+    class iterator_vector_const;
+
     template <class T>
     class iterator_vector : public ft::iterator<ft::random_access_iterator_tag, T, std::ptrdiff_t, T*, T&>
     {
@@ -33,7 +38,7 @@ namespace ft
 
             iterator_vector(T* data) : _ptr_current(data) {}
             
-            iterator_vector(const iterator_vector& src) : _ptr_current(src._ptr_current)
+            iterator_vector(const iterator_vector& src) : _ptr_current(src._ptr_current) // AJOUT A VERIFIER
             {
                 *this = src;
             }
@@ -116,34 +121,34 @@ namespace ft
 
             ///____________ Relational operators
     
-            bool operator==(const iterator_vector& rhs)
+            bool operator==(const ft::iterator_vector_const<T>& rhs) const
             {
                 return this->_ptr_current == rhs._ptr_current;
             }
             
-            bool operator!=(const iterator_vector& rhs)
+            bool operator!=(const ft::iterator_vector_const<T>& rhs) const
             {
-                return !(this->_ptr_current == rhs._ptr_current);
+                return this->_ptr_current != rhs._ptr_current;
             }
 
-            bool operator<(const iterator_vector& rhs)
+            bool operator<(const ft::iterator_vector_const<T>& rhs) const
             {
                 return this->_ptr_current < rhs._ptr_current;
             }
            
-            bool operator>(const iterator_vector& rhs)
+            bool operator>(const ft::iterator_vector_const<T>& rhs) const
             {
-                return rhs._ptr_ccurent < this->_ptr_current;
+                return this->_ptr_current > rhs._ptr_current;
             }
            
-            bool operator<=(const iterator_vector& rhs)
+            bool operator<=(const ft::iterator_vector_const<T>& rhs) const
             {
-                return !(this->_ptr_ccurent > rhs._ptr_current);
+                return this->_ptr_current <= rhs._ptr_current;
             }
 
-            bool operator>=(const iterator_vector& rhs)
+            bool operator>=(const ft::iterator_vector_const<T>& rhs) const
             {
-                return !(this->_ptr_ccurent < rhs._ptr_current);
+                return this->_ptr_current >= rhs._ptr_current;
             }
     
             //---> Operator + et - // pourquoi member ?
@@ -151,7 +156,6 @@ namespace ft
             friend iterator_vector operator+(difference_type n, iterator_vector const & rhs)
             {
                 return iterator_vector(rhs._ptr_current + n);
-                //return iterator_vector(rhs._ptr_current + n)
             }
             
             friend difference_type operator-(iterator_vector const & lhs, iterator_vector const & rhs)
@@ -168,9 +172,9 @@ namespace ft
         public:
             // ******** MEMBER TYPES ************
             typedef std::ptrdiff_t difference_type;
-            typedef T value_type;
-            typedef T* pointer;
-            typedef T& reference;
+            typedef const T value_type;
+            typedef const T* pointer;
+            typedef const T& reference;
             typedef ft::random_access_iterator_tag iterator_category;
 
             // ******** Attribute ***************
@@ -206,7 +210,7 @@ namespace ft
 
             iterator_vector_const operator+(difference_type n) const
             {
-                return iterator_vector_const(_ptr_current + n);
+                return iterator_vector_const(this->_ptr_current + n);
             }
 
             iterator_vector_const& operator+=(difference_type n) //on modifie egalement current
@@ -217,14 +221,14 @@ namespace ft
 
             iterator_vector_const& operator++()
             {
-                _ptr_current++;
+                this->_ptr_current++;
                 return *this;
             }           
 
             iterator_vector_const operator++(int)
             {
                 iterator_vector_const tmp = *this;
-                _ptr_current++;
+                ++(*this);
                 return tmp;
             }
 
@@ -241,14 +245,14 @@ namespace ft
 
             iterator_vector_const& operator--()
             {
-                _ptr_current--;
+                this->_ptr_current--;
                 return *this;
             }
 
             iterator_vector_const operator--(int)
             {
                 iterator_vector_const tmp = *this;
-                _ptr_current--; 
+                --(*this); 
                 return tmp;
             }
        
@@ -269,34 +273,34 @@ namespace ft
 
             ///____________ Relational operators
     
-            bool operator==(const iterator_vector_const& rhs)
+            bool operator==(const iterator_vector_const& rhs) const
             {
                 return this->_ptr_current == rhs._ptr_current;
             }
             
-            bool operator!=(const iterator_vector_const& rhs)
+            bool operator!=(const iterator_vector_const& rhs) const
             {
-                return !(this->_ptr_current == rhs._ptr_current);
+                return this->_ptr_current != rhs._ptr_current;
             }
 
-            bool operator<(const iterator_vector_const& rhs)
+            bool operator<(const iterator_vector_const& rhs) const
             {
                 return this->_ptr_current < rhs._ptr_current;
             }
            
-            bool operator>(const iterator_vector_const& rhs)
+            bool operator>(const iterator_vector_const& rhs) const
             {
-                return rhs._ptr_current < this->_ptr_current;
+                return this->_ptr_current > rhs._ptr_current;
             }
            
-            bool operator<=(const iterator_vector_const& rhs)
+            bool operator<=(const iterator_vector_const& rhs) const
             {
-                return !(this->_ptr_current > rhs._ptr_current);
+                return this->_ptr_current <= rhs._ptr_current;
             }
 
-            bool operator>=(const iterator_vector_const& rhs)
+            bool operator>=(const iterator_vector_const& rhs) const
             {
-                return !(this->_ptr_current < rhs._ptr_current);
+                return this->_ptr_current >= rhs._ptr_current;
             }
             
             //---> Operator + et -  // pourquoi member?
