@@ -2,7 +2,7 @@
 
 #define REVERSE_ITERATOR_HPP
 
-#include <iterator>
+#include "iterator"
 #include "iterator_traits.hpp"
 
 namespace ft
@@ -169,13 +169,13 @@ namespace ft
     //---> Operator + et - ===> A RECHECKER LES retours des functions
     
     template <class Iterator>
-    reverse_iterator<Iterator> operator+ (typename reverse_iterator<Iterator>::difference_type n, const reverse_iterator<Iterator>& it)
+    reverse_iterator<Iterator> operator+(typename reverse_iterator<Iterator>::difference_type n, const reverse_iterator<Iterator>& it)
     {
         return it + n;
     }
 
     template <class Iterator1, class Iterator2>
-    typename reverse_iterator<Iterator1>::difference_type operator- (const reverse_iterator<Iterator1> & lhs, const reverse_iterator<Iterator2>& rhs)
+    typename reverse_iterator<Iterator1>::difference_type operator-(const reverse_iterator<Iterator1> & lhs, const reverse_iterator<Iterator2>& rhs)
     {
         return rhs.base() - lhs.base();
     }

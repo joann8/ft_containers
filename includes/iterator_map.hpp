@@ -6,13 +6,16 @@
 
 #define ITERATOR_MAP_HPP
 
-#include <iterator>
+#include "iterator"
 #include <memory> //std::allocator
 #include "iterator_traits.hpp"
 #include "rbt.hpp"
 
 namespace ft
 {
+    template <class T>
+    class iterator_map_const;
+
     template <class T>
     class iterator_map : public ft::iterator<ft::bidirectional_iterator_tag, T, std::ptrdiff_t, T*, T&>
     {
@@ -32,11 +35,13 @@ namespace ft
 
             //---> Constructeurs, Destructeur et operateur=
            
-            iterator_map() : ptr(NULL) { return;}
+            iterator_map() : ptr(NULL) {}
 
-            iterator_map(rbt_node* data) : ptr(data) { return; }
-            
-            iterator_map(const iterator_map& src) : ptr(src.ptr)  { return; }
+            iterator_map(rbt_node* data) : ptr(data) {}
+
+            //iterator_map(iterator_map& src) : ptr(src.ptr) {}
+
+            iterator_map(const iterator_map& src) : ptr(src.ptr) {}
 
             iterator_map& operator=(const iterator_map & src)
             {
@@ -57,7 +62,7 @@ namespace ft
                 rbt_node* current = ptr;
                 rbt_node* res;
                 if (current->right) // si j'ai un fils droit, je cherche la valeur min dans cette branche
-                    res = current->right.getMinChild();
+                    res = current->right->getMinChild();
                 else
                 {
                     rbt_node* current_parent = current->parent;
@@ -85,7 +90,7 @@ namespace ft
                 rbt_node* current = ptr;
                 rbt_node* res;
                 if (current->left) // si j'ai un fils gauche, je cherche la valeur max dans cette branche
-                    res = current->left.getMaxChild();
+                    res = current->left->getMaxChild();
                 else
                 {
                     rbt_node* current_parent = current->parent;
@@ -119,14 +124,15 @@ namespace ft
 
             ///____________ Relational operators
     
-            bool operator==(const iterator_map& rhs) const
+    
+            bool operator==(const iterator_map_const<T>& rhs) const
             {
                 return this->ptr == rhs.ptr;
             }
             
-            bool operator!=(const iterator_map& rhs) const
+            bool operator!=(const iterator_map_const<T>& rhs) const
             {
-                return !(this->ptr == rhs.ptr);
+                return this->ptr != rhs.ptr;
             }          
     };
 
@@ -137,29 +143,29 @@ namespace ft
         public:
             // ******** MEMBER TYPES ************
             typedef std::ptrdiff_t difference_type;
-            typedef T value_type;
-            typedef T* pointer;
-            typedef T& reference;
+            typedef const T value_type;
+            typedef const T* pointer;
+            typedef const T& reference;
             typedef ft::bidirectional_iterator_tag iterator_category;
             typedef rbt_node<value_type> rbt_node;
 
             // ******** Attribute ***************
-            rbt_node* ptr; // A definir
+            rbt_node* ptr; 
             
             // ********** MEMBER FUNCTIONS ********** 
 
             //---> Constructeurs, Destructeur et operateur=
            
-            iterator_map_const() : ptr(NULL) { return; }
+            iterator_map_const() : ptr(NULL) {}
 
-            iterator_map_const(rbt_node* data) : ptr(data) {}
+            iterator_map_const(rbt_node* data) : ptr(data) { return;}
             
-            iterator_map_const(iterator_map_const const & src) : ptr(src.ptr)
-            {
-                *this = src;
-            }
+            iterator_map_const(const iterator_map_const& src) : ptr(src.ptr) {}
   
-            iterator_map_const(iterator_map<T> const & src) :  ptr(src.ptr) {} // capable de construire a partir d'un it non constant 
+            iterator_map_const(const iterator_map<value_type>& src) :  ptr(src.ptr) { } // capable de construire a partir d'un it non constant 
+            
+         //   iterator_map_const(iterator_map<value_type> & src) :  ptr(src.ptr) { } // capable de construire a partir d'un it non constant 
+
             
             iterator_map_const& operator=(const iterator_map_const & src)
             {
@@ -167,7 +173,14 @@ namespace ft
                     this->ptr = src.ptr;
                 return *this;
             }
-
+/*
+            iterator_map_const& operator=(const iterator_map<value_type> & src)
+            {
+                if (this != &src)
+                    this->ptr = src.ptr;
+                return *this;
+            }
+*/
             virtual ~iterator_map_const() {}
             
             //---> operators
@@ -179,7 +192,7 @@ namespace ft
                 rbt_node* current = ptr;
                 rbt_node* res;
                 if (current->right) // si j'ai un fils droit, je cherche la valeur min dans cette branche
-                    res = current->right.getMinChild();
+                    res = current->right->getMinChild();
                 else
                 {
                     rbt_node* current_parent = current->parent;
@@ -206,7 +219,7 @@ namespace ft
                 rbt_node* current = ptr;
                 rbt_node* res;
                 if (current->left) // si j'ai un fils gauche, je cherche la valeur max dans cette branche
-                    res = current->left.getMaxChild();
+                    res = current->left->getMaxChild();
                 else
                 {
                     rbt_node* current_parent = current->parent;
@@ -240,14 +253,14 @@ namespace ft
 
             ///____________ Relational operators
     
-            bool operator==(const iterator_map_const& rhs)
+            bool operator==(const iterator_map_const& rhs) const
             {
                 return this->ptr == rhs.ptr;
             }
             
-            bool operator!=(const iterator_map_const& rhs)
+            bool operator!=(const iterator_map_const& rhs) const
             {
-                return !(this->ptr == rhs.ptr);
+                return this->ptr != rhs.ptr;
             }
     };
  }

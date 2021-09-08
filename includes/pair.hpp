@@ -27,20 +27,17 @@ namespace ft
                 return;
             }
 
-            pair(const first_type& a, const second_type&b) : first(a), second(b)
+            pair(const first_type& a, const second_type& b) : first(a), second(b)
             {
                 return;
             }
 
             ~pair() {};
     
-            pair& operator=(const pair&src)
+            pair& operator=(const pair& src)
             {
-                if (this != &src) // a rechecker
-                {
-                    this->first = src.first;
-                    this->second = src.second;
-                }
+                this->first = src.first;
+                this->second = src.second;
                 return *this;
             }         
 
@@ -89,9 +86,9 @@ namespace ft
     //---> Add make_pair
 
     template <class T1, class T2>
-    pair <T1, T2> make_pair(T1 x, T2 y)
+    pair<T1, T2> make_pair(T1 x, T2 y)
     {
-        return pair<T1,T2>(x, y);
+        return (pair<T1,T2>(x, y));
     }
 }
 

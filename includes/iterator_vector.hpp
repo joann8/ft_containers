@@ -7,8 +7,9 @@
 
 #define ITERATOR_VECTOR_HPP
 
-#include <iterator>
+//#include <iterator>
 #include <memory> //std::allocator
+#include "iterator_base.hpp"
 #include "iterator_traits.hpp"
 
 namespace ft
