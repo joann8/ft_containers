@@ -8,7 +8,7 @@
 #include "comparison.hpp"
 #include "enable_if.hpp"
 #include <iostream>
-#include <sstream>
+#include <sstream> //pour exceptions messages
 
 namespace ft
 {

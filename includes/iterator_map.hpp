@@ -6,10 +6,10 @@
 
 #define ITERATOR_MAP_HPP
 
-#include "iterator"
 #include <memory> //std::allocator
-#include "iterator_traits.hpp"
 #include "rbt.hpp"
+#include "iterator"
+#include "iterator_traits.hpp"
 
 namespace ft
 {
@@ -26,10 +26,10 @@ namespace ft
             typedef T* pointer;
             typedef T& reference;
             typedef ft::bidirectional_iterator_tag iterator_category;
-            typedef rbt_node<value_type> rbt_node;
+            typedef rbt_node<T> rbt_node;
 
             // ******** Attribute ***************
-            rbt_node* ptr;
+            rbt_node *ptr;
             
             // ********** MEMBER FUNCTIONS ********** 
 
@@ -38,8 +38,6 @@ namespace ft
             iterator_map() : ptr(NULL) {}
 
             iterator_map(rbt_node* data) : ptr(data) {}
-
-            //iterator_map(iterator_map& src) : ptr(src.ptr) {}
 
             iterator_map(const iterator_map& src) : ptr(src.ptr) {}
 
@@ -61,21 +59,25 @@ namespace ft
             {
                 rbt_node* current = ptr;
                 rbt_node* res;
-                if (current->right) // si j'ai un fils droit, je cherche la valeur min dans cette branche
+                if (current->right && current->right->is_null == false) // si j'ai un fils droit, je cherche la valeur min dans cette branche
                     res = current->right->getMinChild();
                 else
                 {
-                    rbt_node* current_parent = current->parent;
-                    while (current_parent && current == current_parent->right) // tant que je suis un fils droit
+                    rbt_node* current_parent = current->parent;                 
+                    while (current_parent && current == current_parent->right
+                            && current_parent->is_init == false) // tant que je suis un fils droit
                     {
                         current = current_parent;
                         current_parent = current_parent->parent;
                     }
-                    res = current_parent;
+                    if (current_parent->is_init == true) //pour resoudre le cas root
+                        res = ptr->right;
+                    else
+                        res = current_parent;
                 }
                 this->ptr = res;
                 return *this;
-            }           
+            }               
 
             iterator_map operator++(int)
             {
@@ -89,18 +91,23 @@ namespace ft
             {
                 rbt_node* current = ptr;
                 rbt_node* res;
-                if (current->left) // si j'ai un fils gauche, je cherche la valeur max dans cette branche
+              
+                if (current->left && current->left->is_null == false) // si j'ai un fils gauche, je cherche la valeur max dans cette branche
                     res = current->left->getMaxChild();
                 else
                 {
-                    rbt_node* current_parent = current->parent;
-                    while (current_parent && current == current_parent->left) // tant que je suis un fils gauche
+                    rbt_node* parent = current->parent;
+                    while (parent && parent->left == current && parent->is_init == false)
                     {
-                        current = current_parent;
-                        current_parent = current_parent->parent;
+                        current = parent;
+                        parent = current->parent;
                     }
-                    res = current_parent;
+                    if (parent->is_init == true)
+                        res = ptr->left;
+                    else
+                       res = parent;
                 }
+            
                 this->ptr = res;
                 return *this;
             }
@@ -119,17 +126,18 @@ namespace ft
 
             pointer operator->() const 
             {
-                return &(this->ptr->content);
+                return &this->ptr->content;
             }
 
             ///____________ Relational operators
     
-    
+            // friend?
             bool operator==(const iterator_map_const<T>& rhs) const
             {
                 return this->ptr == rhs.ptr;
             }
             
+            //friend?
             bool operator!=(const iterator_map_const<T>& rhs) const
             {
                 return this->ptr != rhs.ptr;
@@ -147,7 +155,7 @@ namespace ft
             typedef const T* pointer;
             typedef const T& reference;
             typedef ft::bidirectional_iterator_tag iterator_category;
-            typedef rbt_node<value_type> rbt_node;
+            typedef rbt_node<T> rbt_node;
 
             // ******** Attribute ***************
             rbt_node* ptr; 
@@ -161,26 +169,23 @@ namespace ft
             iterator_map_const(rbt_node* data) : ptr(data) { return;}
             
             iterator_map_const(const iterator_map_const& src) : ptr(src.ptr) {}
-  
-            iterator_map_const(const iterator_map<value_type>& src) :  ptr(src.ptr) { } // capable de construire a partir d'un it non constant 
-            
-         //   iterator_map_const(iterator_map<value_type> & src) :  ptr(src.ptr) { } // capable de construire a partir d'un it non constant 
-
-            
+              
+            iterator_map_const(const iterator_map<T>& src) :  ptr(src.ptr) { } // capable de construire a partir d'un it non constant 
+                      
             iterator_map_const& operator=(const iterator_map_const & src)
             {
                 if (this != &src)
                     this->ptr = src.ptr;
                 return *this;
             }
-/*
-            iterator_map_const& operator=(const iterator_map<value_type> & src)
+
+            iterator_map_const& operator=(const iterator_map<T> & src)
             {
                 if (this != &src)
                     this->ptr = src.ptr;
                 return *this;
             }
-*/
+
             virtual ~iterator_map_const() {}
             
             //---> operators
@@ -191,17 +196,21 @@ namespace ft
             {
                 rbt_node* current = ptr;
                 rbt_node* res;
-                if (current->right) // si j'ai un fils droit, je cherche la valeur min dans cette branche
+                if (current->right && current->right->is_null == false) // si j'ai un fils droit, je cherche la valeur min dans cette branche
                     res = current->right->getMinChild();
                 else
                 {
-                    rbt_node* current_parent = current->parent;
-                    while (current_parent && current == current_parent->right) // tant que je suis un fils droit
+                    rbt_node* current_parent = current->parent;                 
+                    while (current_parent && current == current_parent->right
+                            && current_parent->is_init == false) // tant que je suis un fils droit
                     {
                         current = current_parent;
                         current_parent = current_parent->parent;
                     }
-                    res = current_parent;
+                    if (current_parent->is_init == true)
+                        res = ptr->right;
+                    else
+                        res = current_parent;
                 }
                 this->ptr = res;
                 return *this;
@@ -218,16 +227,21 @@ namespace ft
             {
                 rbt_node* current = ptr;
                 rbt_node* res;
-                if (current->left) // si j'ai un fils gauche, je cherche la valeur max dans cette branche
+                if (current->left && current->left->is_null == false) // si j'ai un fils gauche, je cherche la valeur max dans cette branche
                     res = current->left->getMaxChild();
                 else
                 {
                     rbt_node* current_parent = current->parent;
-                    while (current_parent && current == current_parent->left) // tant que je suis un fils gauche
+                    while (current_parent && current == current_parent->left
+                            && current_parent->is_init == false) // tant que je suis un fils gauche
                     {
                         current = current_parent;
                         current_parent = current_parent->parent;
                     }
+                    if (current_parent->is_init == true) //cas current == min
+                        res = ptr->left; // a verifier
+                    else
+                        res = current_parent;
                     res = current_parent;
                 }
                 this->ptr = res;

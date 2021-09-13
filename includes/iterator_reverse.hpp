@@ -114,7 +114,7 @@ namespace ft
 
             pointer operator->() const // A RECHECKER retour function
             {
-                return &(operator*());
+                return &(this->operator*());
             }
             
             reference operator[](difference_type n) const
