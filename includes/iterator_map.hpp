@@ -63,17 +63,17 @@ namespace ft
                     res = current->right->getMinChild();
                 else
                 {
-                    rbt_node* current_parent = current->parent;                 
-                    while (current_parent && current == current_parent->right
-                            && current_parent->is_init == false) // tant que je suis un fils droit
+                    rbt_node* parent = current->parent;                 
+                    while (parent && current == parent->right
+                            && parent->is_init == false) // tant que je suis un fils droit
                     {
-                        current = current_parent;
-                        current_parent = current_parent->parent;
+                        current = parent;
+                        parent = parent->parent;
                     }
-                    if (current_parent->is_init == true) //pour resoudre le cas root
+                    if (parent->is_init == true) //pour resoudre le cas root
                         res = ptr->right;
                     else
-                        res = current_parent;
+                        res = parent;
                 }
                 this->ptr = res;
                 return *this;
@@ -131,7 +131,18 @@ namespace ft
 
             ///____________ Relational operators
     
-            // friend?
+           /* // friend?
+            friend bool operator==(const iterator_map& lhs, const iterator_map& rhs) 
+            {
+                return (lhs.ptr == rhs.ptr);
+            }
+            
+            //friend?
+            friend bool operator!=(const iterator_map& lhs, const iterator_map& rhs)
+            {
+			    return (lhs.ptr != rhs.ptr);
+            }   */
+
             bool operator==(const iterator_map_const<T>& rhs) const
             {
                 return this->ptr == rhs.ptr;
@@ -141,7 +152,7 @@ namespace ft
             bool operator!=(const iterator_map_const<T>& rhs) const
             {
                 return this->ptr != rhs.ptr;
-            }          
+            }        
     };
 
 
@@ -267,6 +278,20 @@ namespace ft
 
             ///____________ Relational operators
     
+            // friend?
+            /*
+            friend bool operator==(const iterator_map_const& lhs, const iterator_map_const& rhs) 
+            {
+                return (lhs.ptr == rhs.ptr);
+            }
+            
+            //friend?
+            friend bool operator!=(const iterator_map_const& lhs, const iterator_map_const& rhs)
+            {
+			    return (lhs.ptr != rhs.ptr);
+            }    
+            */
+
             bool operator==(const iterator_map_const& rhs) const
             {
                 return this->ptr == rhs.ptr;
@@ -276,6 +301,7 @@ namespace ft
             {
                 return this->ptr != rhs.ptr;
             }
+            
     };
  }
 #endif

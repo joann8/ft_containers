@@ -99,6 +99,7 @@ namespace ft
                 _begin->left = _root;
                 _begin->parent = NULL;
                 _begin->is_null = false;
+                _root->parent =_begin;
                // std::cout << "Exit constructor 1" << std::endl;
                 return;
             }
@@ -115,6 +116,7 @@ namespace ft
                 _begin->left = _root;
                 _begin->parent = NULL;
                 _begin->is_null = false;
+                _root->parent =_begin;
          		this->insert(first, last);
               //  std::cout << "Exit constructor 2" << std::endl;
                 return;
@@ -130,10 +132,11 @@ namespace ft
                 _begin->left = _root;
                 _begin->parent = NULL;
                 _begin->is_null = false;
+                _root->parent =_begin;
     		    for(const_iterator it = src.begin(); it != src.end(); it++)
                 {
-                    std::cout  << "end = " << src.end()->first << std::endl;
-                    std::cout  << "it = " << it->first << std::endl;
+                    //std::cout  << "end = " << src.end()->first << std::endl;
+                    //std::cout  << "it = " << it->first << std::endl;
                     this->insert(*it);
                 }
                // std::cout << "Exit constructor 3" << std::endl;
@@ -308,43 +311,51 @@ namespace ft
             void erase(iterator position)
             {
                 rbt_node* tmp = position.ptr;
-                if (tmp)
+                if (tmp->is_null == false)
                 {
                    if (rbt_search_root(tmp->content.first))
                     {
                        // std::cout << "\ncontent found!" << std::endl;
                       //  std::cout << "to delete = " << tmp->content.first << std::endl;
-                        rbt_delete(tmp->content.first);
+                      rbt_delete(tmp->content.first, position);
                     }
                 }
             }
 
             size_type erase(const key_type& k)
             {
-                return rbt_delete(k);
+
+                rbt_node* tmp = rbt_search_root(k);
+                size_type size =  this->size();
+                if (tmp->is_null == false)
+                {
+                    rbt_delete(k, iterator(tmp));
+                }
+                return this->size() != size;
             }
 
             void erase (iterator first, iterator last)
             {
-                std::cout << "INIT = " << first->first << std::endl;
-
-                while (first != last)
+                size_type diff = 0;
+                iterator start = first;
+                while (start != last)
                 {
+                    diff++;
+                    start++;
+                }
 
-                    std::cout << "----start while" << std::endl;
-                    iterator to_delete = first;
-                    std::cout << "first = " << first->first << std::endl;
+                size_type i = 0;
+                while (i < diff)
+                {
+                    rbt_node* tmp = rbt_search_root(first->first);
 
+                    if (tmp)
+                    {
+
+                            first = rbt_delete(tmp->content.first, first);
+                    }
                     first++;
-                    std::cout << "first ++ = " << first->first << std::endl;
-
-                    std::cout << "to_delete = " << to_delete->first << std::endl;
-                    erase(to_delete);
-                                        std::cout << "next" << std::endl;
-
-                    std::cout << "to_delete = " << to_delete->first << std::endl;
-                    std::cout << "first = " << first->first << std::endl;
-                    std::cout << "---end while" << std::endl;
+                    i++;
                 }
             }
             
@@ -388,16 +399,19 @@ namespace ft
             iterator find(const key_type& k)
             {
                 rbt_node* tmp = rbt_search_root(k);
-                if (tmp != NULL)
+                if (tmp->is_null == false)
                     return (iterator(tmp));
                 else
+                {
+                  //  std::cout << "end!" << std::endl;
                     return end();
+                }
             }
             
             const_iterator find(const key_type& k) const
             {
                 rbt_node* tmp = rbt_search_root(k);
-                if (tmp != NULL)
+                if (tmp->is_null == false)
                     return (const_iterator(tmp));
                 else
                     return end();             
@@ -406,7 +420,7 @@ namespace ft
             size_type count(const key_type& k) const
             {
                 rbt_node* tmp = rbt_search_root(k);
-                if (tmp != NULL)
+                if (tmp->is_null == false)
                     return (1);
                 else
                     return 0;   
@@ -491,6 +505,7 @@ namespace ft
              //   std::cout << " *** Enter rbt_create_null_node " << std::endl;
 
                 rbt_node* new_node = _node_allocator.allocate(1);
+
                // _allocator.construct(&new_node->content, data);
                 (void)data;
                 //_node_allocator.construct(new_node, rbt_node());
@@ -562,16 +577,18 @@ namespace ft
 
             rbt_node* rbt_search(rbt_node* src, const Key& key) const
             {
-                if (src && src->is_null == false) 
+                while (src && src->is_null == false) 
                 {
+
+
                     if (this->_comp(key, src->content.first) == true)
-                        return (rbt_search(src->left, key));
+                        src = src->left;
                     else if (this->_comp(src->content.first, key) == true)
-                        return (rbt_search(src->right, key));
+                        src = src->right;
                     else
                         return (src);
                 }
-                return (NULL);
+                return (src);
             }
 
             rbt_node* rbt_search_root(const Key& key) const
@@ -913,7 +930,7 @@ namespace ft
                 }
             }
 
-            size_type rbt_delete(const key_type& key)
+            iterator rbt_delete(const key_type& key, iterator position)
             {
 
             //    std::cout << "\nSTATUS TREE INIT DELETE: " << std::endl;
@@ -922,25 +939,33 @@ namespace ft
                 
                 rbt_node* to_delete = rbt_search(_root, key);
                 rbt_node* replacement;
+                bool bol_change = 0;
 
-                if (to_delete == NULL)
+                if (to_delete->is_null == true)
                 {
-                //    std::cout << "-------> exit rbt delete 0" << std::endl;
-                    return 0;
+                    //std::cout << "-------> exit rbt delete 0" << std::endl;
+                    return position;
                 }
                 
-               // std::cout << "to_delete = " << to_delete->content.first << std::endl;
+               //std::cout << "to_delete = " << to_delete->content.first << std::endl;
 
                 //Initital steps --> convert to a 0 or 1 child case 
                 if (to_delete->left->is_null == false && to_delete->right->is_null == false)
                 {
-                 //   std::cout << "\n** Case 2  non null childs --- > conversion **" << std::endl;
+                   //std::cout << "\n** Case 2  non null childs --- > conversion **" << std::endl;
+
+                    //std::cout << "position = " << position->first << std::endl;
 
                     replacement = to_delete;
                     to_delete = to_delete->right->getMinChild();
 
-                   _allocator.destroy(&replacement->content);
+                    _allocator.destroy(&replacement->content);
                     _allocator.construct(&replacement->content, to_delete->content);
+
+                    bol_change = 1;
+                   // position = iterator(--(replacement)); 
+                   // std::cout << "position = " << position->first << std::endl;
+          
                 }
                 
                 bool original_is_red = to_delete->is_red;
@@ -967,7 +992,8 @@ namespace ft
                     replacement = to_delete->right;
                     rbt_delete_case2(to_delete, to_delete->right, to_delete->left);
                    // rbt_free_node(to_delete->left);
-                }
+                }                    
+
                // replacement = to_delete;
 
                 //rbt_convert_to_null(to_delete);
@@ -975,11 +1001,16 @@ namespace ft
              //   std::cout << "replacement = " << replacement->content.first << std::endl;
              //   std::cout << "STATUS BEFORE FIX " << std::endl;
              //   print_rbt();
-                
+
                 if (_root->is_null == false)
                     rbt_delete_fix_violation(original_is_red, replacement); 
-              //  std::cout << "-------> exit rbt delete with 1" << std::endl;
-                return 1;
+              //  std::cout << "-------> exit rbt delete with 1" << std::endl; 
+
+
+                if(bol_change == 1)
+                    position--;
+
+                return position;
             }
 
         
@@ -1036,6 +1067,46 @@ namespace ft
             if (node->right && node->right->is_null == false)
                 print_rbt(node->right);
         }
+
+        		void print_node(rbt_node* node) const
+		{
+			if (node == NULL) {
+				std::cout << "NULL" << std::endl;
+                return;
+			}
+			std::cout << std::endl;
+			if (node->is_red) 
+				std::cout << RED;
+			
+			std::cout << "val : " << node->content.first << std::endl;
+			std::cout << "parent : ";
+			if (node->parent) 
+            {
+                if (node->parent == _begin)
+				    std::cout << "BEGIN" << std::endl;
+                else                
+				    std::cout << node->parent->content.first << std::endl;
+            }
+            else
+                std::cout << "NULL" << std::endl;
+
+			std::cout << "left : ";
+			if (node->left == NULL)
+                std::cout << "*NULL NODE*" << std::endl;
+            else if (node->left->is_null == true) 
+				std::cout << "NULL LEAF" << std::endl;
+			else if (node->left->is_null == false) 
+				std::cout << node->left->content.first << std::endl;
+			
+			std::cout << "right : ";
+			if (node->right == NULL)
+                std::cout << "*NULL NODE*" << std::endl;
+            else if (node->right->is_null == true)
+				std::cout << "NULL LEAF" << std::endl;
+			else if (node->right->is_null == false) 
+				std::cout << node->right->content.first << std::endl;
+        }
+              
                 
     };
 

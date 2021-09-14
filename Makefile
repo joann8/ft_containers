@@ -1,6 +1,6 @@
 NAME= ft_containers
 
-SRCS= main_test.cpp common.cpp test_vector.cpp test_map.cpp
+SRCS= main_test.cpp common.cpp test_map.cpp test_vector.cpp
 
 OBJS= $(addprefix srcs/, $(SRCS:.cpp=.o))
 
@@ -19,7 +19,7 @@ $(NAME): $(OBJS)
 all: $(NAME)
 
 clean:
-	rm -f $(OBJS):
+	rm -f $(OBJS)
 
 fclean: clean
 	rm -f $(NAME)
