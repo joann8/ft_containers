@@ -41,18 +41,19 @@ namespace ft
             bool is_red;
             bool is_null;
             bool is_init;
+            bool is_end;
             rbt_node* parent;
             rbt_node* left;
             rbt_node* right;
 
             rbt_node(void) : 
-            is_red(true), is_null(false), is_init(false), parent(NULL), left(NULL), right(NULL)
+            is_red(true), is_null(false), is_init(false), is_end(false), parent(NULL), left(NULL), right(NULL)
             {
                 return;
             }
         
             rbt_node(rbt_node const& src) : 
-            is_red(src.is_red), is_null(src.is_null), is_init(src.is_init), parent(src.parent), left(src.left), right(src.right)
+            is_red(src.is_red), is_null(src.is_null), is_init(src.is_init), is_end(src.is_end), parent(src.parent), left(src.left), right(src.right)
             {
                 return;
             }
@@ -67,6 +68,7 @@ namespace ft
                 this->is_red = src.is_red;
                 this->is_null = src.is_null;
                 this->is_init = src.is_init;
+                this->is_end = src.is_end;
                 this->parent = src.parent;
                 this->left = src.left;
                 this->right = src.right;

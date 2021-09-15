@@ -80,6 +80,7 @@ namespace ft
             rbt_node* _root;
             size_type _size;
             rbt_node* _begin;
+            rbt_node* _end;
             
 
 
@@ -91,7 +92,7 @@ namespace ft
                        
             // 1. Empty by default , with no elements 
             explicit map (const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()) :
-            _comp(comp), _allocator(alloc), _node_allocator(), _val(ft::make_pair(key_type(), mapped_type())), _root(rbt_create_null_node(_val)), _size(0), _begin(rbt_create_null_node(_val))
+            _comp(comp), _allocator(alloc), _node_allocator(), _val(ft::make_pair(key_type(), mapped_type())), _root(rbt_create_null_node(_val)), _size(0), _begin(rbt_create_null_node(_val)), _end(rbt_create_null_node(_val))
             {
               //  std::cout << "Enter constructor 1" << std::endl;
                 _begin->is_init = true;
@@ -100,6 +101,8 @@ namespace ft
                 _begin->parent = NULL;
                 _begin->is_null = false;
                 _root->parent =_begin;
+                _end->is_end = true;
+                _end->parent = _root;
                // std::cout << "Exit constructor 1" << std::endl;
                 return;
             }
@@ -107,7 +110,7 @@ namespace ft
             // 2. Range : Constructs a container with as many elements as the range [first,last), with each element constructed from its corresponding element in that range
             template <class InputIterator>
             map(InputIterator first, InputIterator last, const key_compare comp = key_compare(), const allocator_type& alloc = allocator_type()) :
-            _comp(comp), _allocator(alloc), _node_allocator(), _val(ft::make_pair(key_type(), mapped_type())), _root(rbt_create_null_node(_val)), _size(0), _begin(rbt_create_null_node(_val))
+            _comp(comp), _allocator(alloc), _node_allocator(), _val(ft::make_pair(key_type(), mapped_type())), _root(rbt_create_null_node(_val)), _size(0), _begin(rbt_create_null_node(_val)), _end(rbt_create_null_node(_val))
 
             {
                // std::cout << "Enter constructor 2" << std::endl;
@@ -117,6 +120,8 @@ namespace ft
                 _begin->parent = NULL;
                 _begin->is_null = false;
                 _root->parent =_begin;
+                _end->is_end = true;
+                _end->parent = _root;
          		this->insert(first, last);
               //  std::cout << "Exit constructor 2" << std::endl;
                 return;
@@ -124,7 +129,7 @@ namespace ft
 
             // 3. Copy constructor
             map(map const & src) :
-            _comp(src._comp), _allocator(src._allocator), _node_allocator(src._node_allocator), _val(src._val), _root(rbt_create_null_node(_val)), _size(0), _begin(rbt_create_null_node(_val))
+            _comp(src._comp), _allocator(src._allocator), _node_allocator(src._node_allocator), _val(src._val), _root(rbt_create_null_node(_val)), _size(0), _begin(rbt_create_null_node(_val)), _end(rbt_create_null_node(_val))
             {
                // std::cout << "Enter constructor 3" << std::endl;
                 _begin->is_init = true;
@@ -133,6 +138,8 @@ namespace ft
                 _begin->parent = NULL;
                 _begin->is_null = false;
                 _root->parent =_begin;
+                _end->is_end = true;
+                _end->parent = _root;
     		    for(const_iterator it = src.begin(); it != src.end(); it++)
                 {
                     //std::cout  << "end = " << src.end()->first << std::endl;
@@ -176,7 +183,9 @@ namespace ft
                 if (_root->is_null == false)
                     tmp = _root->getMinChild();
                 else
-                    tmp = _begin->right;
+                    tmp = _end;
+                //  tmp = _begin->right;
+
                 return iterator(tmp);
             }
 
@@ -187,31 +196,38 @@ namespace ft
                 if (_root->is_null == false)
                     tmp = _root->getMinChild();
                 else
-                    tmp = _begin->right;
+                    tmp = _end;
+
+                   // tmp = _begin->right;
                 return const_iterator(tmp);
 
             }
 
             iterator end() 
             {
-                rbt_node* tmp;
+               
+               
+               /* rbt_node* tmp;
                 if (_root->is_null == false)
                     tmp = _root->getMaxChild();
                 else
                     tmp = _begin;
-                return iterator(tmp->right); // pas sure
+                return iterator(tmp->right); // pas sure*/
+                return (iterator(_end));
             }
 
             const_iterator end() const
             {
                 
-                rbt_node* tmp;
+                /*rbt_node* tmp;
                    
                 if (_root->is_null == false)
                     tmp = _root->getMaxChild();
                 else
                     tmp = _begin;
-                return const_iterator(tmp->right); // pas sure
+                return const_iterator(tmp->right); // pas sure*/
+                return (const_iterator(_end));
+
             }
 
             reverse_iterator rbegin()
@@ -243,7 +259,22 @@ namespace ft
                 //if k matches the key of an element in the container, the function returns a reference to its mapped value
                 //If k does not match, the function inserts a new element with that key and returns a reference to its mapped value.
                 //Notice that this always increases the container size by one, even if no mapped value is assigned to the element (the element is constructed using its default constructor).
+               /* rbt_node* tmp = rbt_search_root(k);
+                if (tmp->is_null == false)
+                {
+                    iterator it = iterator(tmp);
+                    return *(ft::make_pair<iterator,bool> (it, false));
+                }
+                else
+                {
+                    rbt_insert(value_type(k, mapped_type()));
+                    iterator it = rbt_search_root(k);
+                    return *(ft::make_pair<iterator, bool> (it,true));
+                }
+                */
+
                 return (*((this->insert(value_type(k,mapped_type()))).first)).second; // defini sur cpp
+
             }
         
             //---> Capacity
@@ -271,6 +302,7 @@ namespace ft
                 this->rbt_clear_tree(_root);
                 _root = rbt_create_null_node(_val);
                 _root->parent = _begin;
+                _end->parent = _root;
                 _size = 0;
             }
 
@@ -278,6 +310,7 @@ namespace ft
 
             ft::pair<iterator, bool> insert(const value_type& val)
             {
+              
                 size_type old_size = this->_size;
                 this->_size += this->rbt_insert(val); // return 1 if an element was inserted
                 iterator it = iterator(rbt_search_root(val.first));
@@ -515,6 +548,7 @@ namespace ft
                 new_node->is_red = false;
                 new_node->is_null = true;
                 new_node->is_init = false;
+                new_node->is_end = false; 
             //    std::cout << " *** Exit rbt_create_null_node " << std::endl;
 
                 return new_node;
@@ -522,20 +556,21 @@ namespace ft
 
             rbt_node* rbt_create_node(value_type const & data)
             {
-              //  std::cout << " *** Enter rbt_create_node" << std::endl;
+              // std::cout << " *** Enter rbt_create_node" << std::endl;
+               //std::cout << " key = " << data.first << " | value = " << data.second << std::endl;
 
                 rbt_node* new_node = _node_allocator.allocate(1);
                 //_node_allocator.construct(new_node, rbt_node());
                 _allocator.construct(&new_node->content, data);
                 new_node->left = rbt_create_null_node(data);
-                new_node->left->parent = new_node;
                 new_node->right = rbt_create_null_node(data);
-                new_node->right->parent = new_node;
                 new_node->parent = NULL;
                 new_node->is_null = false;
                 new_node->is_init = false;
                 new_node->is_red = true;
-            //    std::cout << " *** Exit rbt_create_node "<< std::endl;
+                new_node->is_end = false; 
+              //  print_node(new_node);
+               // std::cout << " *** Exit rbt_create_node "<< std::endl;
 
 
                 return new_node;
@@ -559,6 +594,8 @@ namespace ft
                 //_node_allocator.destroy(node);
                 _allocator.destroy(&node->content);
                 rbt_free_node(node->left);
+                //if (node->right == _end)
+                
                 rbt_free_node(node->right);
                 node->is_red = false;
                 node->is_null = true;
@@ -570,7 +607,7 @@ namespace ft
             {
                 if (node->left)
                     rbt_clear_tree(node->left);
-                if (node->right) // node->right != end ?
+                if (node->right && node->right->is_end == false) // node->right != end ?
                     rbt_clear_tree(node->right);
                 this->rbt_free_node(node);
             }
@@ -711,18 +748,41 @@ namespace ft
             
             size_type rbt_insert(value_type const & data)
             {
-              //  std::cout << "STATUS TREE INIT: " << std::endl;
-              //  print_rbt();
-                
+              /* std::cout << "\nSTATUS TREE INIT: " << std::endl;
+               print_rbt();
+                std::cout << std::endl;
+                std::cout << "\n_end:" << std::endl;
+                print_node(_end);
+                std::cout << std::endl;
+
+                 std::cout << "\n_root:" << std::endl;
+                print_node(_root);
+                std::cout << std::endl;*/
+
                 rbt_node* new_node = rbt_create_node(data);
+              
+             /*   std::cout << "\nnew node:" << std::endl;
+                print_node(new_node);
+                std::cout << std::endl; */
+
+               // std::cout << "current tree:" << std::endl;
+               // print_rbt();
+
                 
                 if (_root->is_null == true)
                 {
+                    //std::cout << "*** ROOT is  NULL ***" << std::endl;
                     new_node->is_red = false;
                     rbt_free_node(_root);
                     _root = new_node;
                     _begin->right = _root;
                     _root->parent = _begin;
+                    
+                   // rbt_free_node(_root->right);
+                   rbt_free_node(_root->right);
+                    _root->right = _end; 
+                    _end->parent = _root;
+
                     //std::cout << "\nSTATUS TREE FINAL (root): " << std::endl;
                     //print_rbt();
                     return(1);
@@ -733,6 +793,7 @@ namespace ft
                     bool is_left_child;
                     while (tmp && tmp->is_null == false)
                     {
+
                         new_node->parent = tmp;
                         if (_comp(tmp->content.first, new_node->content.first) == true) // si new_node est plus grand
                         {   
@@ -752,23 +813,39 @@ namespace ft
                             return (0);
                         }
                     }
+                        
                     if (is_left_child == 1)
                     {
-                        tmp->parent->left = new_node;
+                        new_node->parent->left = new_node;
+                        rbt_free_node(tmp);
                        // new_node->parent = tmp;
                     }
                     else
                     {
-                        tmp->parent->right = new_node;
+                        new_node->parent->right = new_node;
+
+                        if (tmp->is_end == true)
+                        {
+                            rbt_free_node(new_node->right);
+                            new_node->right = _end; 
+                            _end->parent = new_node;
+                        }
+                        else
+                        {
+                            rbt_free_node(tmp);
+                        }
+
                        // new_node->parent = tmp->parent;
                     }
-                    rbt_free_node(tmp);
+                    //rbt_free_node(tmp);
+
                     //std::cout << "\nSTATUS TREE BEFORE FIX: " << std::endl;
                     //print_rbt();
                     rbt_insert_fix_violation(new_node);
-                 //   std::cout << "\nSTATUS TREE FINAL (after insert fix): " << std::endl;
-                 //   print_rbt();
-                 //   std::cout << std::endl;
+                  
+                   // std::cout << "\nSTATUS TREE FINAL (after insert fix): " << std::endl;
+                   // print_rbt();
+                  //  std::cout << std::endl;
                     return(1);
                 }
             }
@@ -782,7 +859,29 @@ namespace ft
                 {
                     _root = rbt_create_null_node(_val);;
                 }*/
-                rbt_convert_to_null(to_delete);
+             
+             //   rbt_convert_to_null(to_delete);
+
+                //_node_allocator.destroy(node);
+                _allocator.destroy(&to_delete->content);
+                rbt_free_node(to_delete->left);
+                //if (node->right == _end)
+                if (to_delete->right == _end)
+                {
+                    to_delete->parent->right = _end; 
+                    _end->parent = to_delete->parent;
+                    rbt_free_node(to_delete->right);
+                    rbt_free_node(to_delete);
+                }
+                else 
+                {
+                    rbt_free_node(to_delete->right);
+                    to_delete->is_red = false;
+                    to_delete->is_null = true;
+                    to_delete->left = NULL;
+                    to_delete->right = NULL;
+                }
+            
                 /*
                 else if (to_delete == to_delete->parent->left)
                 {
@@ -806,8 +905,15 @@ namespace ft
                     to_delete->parent->left = child;
                 else
                     to_delete->parent->right = child;
-                child->parent = to_delete->parent;
-                rbt_free_node(sibling);
+                if (sibling == _end)
+                {
+                    rbt_node* tmp = _root->getMaxChild();
+                    rbt_free_node(tmp->right);
+                    tmp->right = _end;
+                    _end->parent = tmp;
+                }
+                else
+                    rbt_free_node(sibling);
                 rbt_free_node(to_delete);
             }
             
@@ -933,9 +1039,13 @@ namespace ft
             iterator rbt_delete(const key_type& key, iterator position)
             {
 
-            //    std::cout << "\nSTATUS TREE INIT DELETE: " << std::endl;
-            //    std::cout << "root = " << _root->content.first << std::endl;
-            //    print_rbt();
+             std::cout << "\nTO DELETE -  " << key << std::endl;
+
+             std::cout << "\nSTATUS TREE INIT DELETE: " << std::endl;
+                std::cout << "root = " << _root->content.first << std::endl;
+                print_rbt();
+                                   std::cout << std::endl;
+
                 
                 rbt_node* to_delete = rbt_search(_root, key);
                 rbt_node* replacement;
@@ -974,6 +1084,8 @@ namespace ft
                 {
                 //    std::cout << "\n** Case 2 null childs**" << std::endl;
                     replacement = to_delete;
+                    if (to_delete->right == _end)
+                        replacement = _end;
                     rbt_delete_case1(to_delete, to_delete->right);
        //             rbt_free_node(to_delete->left);
 
@@ -1009,7 +1121,10 @@ namespace ft
 
                 if(bol_change == 1)
                     position--;
-
+       std::cout << "\nSTATUS TREE INIT END: " << std::endl;
+                std::cout << "root = " << _root->content.first << std::endl;
+                print_rbt();
+                                   std::cout << std::endl;
                 return position;
             }
 
@@ -1033,7 +1148,7 @@ namespace ft
 			if (node->is_red) 
 				std::cout << RED;
 			
-			std::cout << "val : " << node->content.first << std::endl;
+			std::cout << "val : " << node->content.first << " | " << node->content.second << std::endl;
 			std::cout << "parent : ";
 			if (node->parent) 
             {
@@ -1057,7 +1172,12 @@ namespace ft
 			if (node->right == NULL)
                 std::cout << "*NULL NODE*" << std::endl;
             else if (node->right->is_null == true)
-				std::cout << "NULL LEAF" << std::endl;
+			{
+                if (node->right == _end)
+                    std::cout << "_end" << std::endl;
+                else
+				    std::cout << "NULL LEAF" << std::endl;
+            }
 			else if (node->right->is_null == false) 
 				std::cout << node->right->content.first << std::endl;
 			
@@ -1078,7 +1198,7 @@ namespace ft
 			if (node->is_red) 
 				std::cout << RED;
 			
-			std::cout << "val : " << node->content.first << std::endl;
+			std::cout << "val : " << node->content.first << " | " << node->content.second << std::endl;
 			std::cout << "parent : ";
 			if (node->parent) 
             {
@@ -1102,7 +1222,12 @@ namespace ft
 			if (node->right == NULL)
                 std::cout << "*NULL NODE*" << std::endl;
             else if (node->right->is_null == true)
-				std::cout << "NULL LEAF" << std::endl;
+            {
+                if (node->right == _end)
+                    std::cout << "_end" << std::endl;
+                else
+				    std::cout << "NULL LEAF" << std::endl;
+            }
 			else if (node->right->is_null == false) 
 				std::cout << node->right->content.first << std::endl;
         }
