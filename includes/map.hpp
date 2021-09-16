@@ -12,7 +12,6 @@
 #include "rbt.hpp"
 #include "iterator_map.hpp"
 
-
 #define RESET   "\033[0m"
 #define RED     "\033[31m"
 #define GREEN   "\033[32m"
@@ -46,8 +45,7 @@ namespace ft
             class value_compare
 	    	{
 	    	    protected:
-		        	Compare _comp; 
-                    //constructeur en protected, a voir?
+		        	Compare _comp; //constructeur en protected, a voir?
 
 	    	    public:
 		    	    typedef bool result_type;
@@ -67,23 +65,17 @@ namespace ft
         
         // *********** ATTRIBUTS ***************
         protected:
-            // A revoir
             typedef rbt_node<value_type> rbt_node;
             typedef typename allocator_type::template rebind<rbt_node>::other node_allocator_type;
 
             key_compare _comp;
             allocator_type _allocator;
             node_allocator_type _node_allocator;
-            
-            value_type _val;
-
-            rbt_node* _root;
             size_type _size;
+            rbt_node* _root;
             rbt_node* _begin;
             rbt_node* _end;
             
-
-
         public:
              
             // ********** MEMBER FUNCTIONS ********** 
@@ -92,7 +84,7 @@ namespace ft
                        
             // 1. Empty by default , with no elements 
             explicit map (const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()) :
-            _comp(comp), _allocator(alloc), _node_allocator(), _val(ft::make_pair(key_type(), mapped_type())), _root(rbt_create_null_node(_val, NULL)), _size(0), _begin(rbt_create_null_node(_val, NULL)), _end(rbt_create_null_node(_val, NULL))
+            _comp(comp), _allocator(alloc), _node_allocator(), _size(0), _root(rbt_create_null_node( NULL)), _begin(rbt_create_null_node(NULL)), _end(rbt_create_null_node( NULL))
             {
               //  std::cout << "Enter constructor 1" << std::endl;
                 _begin->is_init = true;
@@ -110,10 +102,8 @@ namespace ft
             // 2. Range : Constructs a container with as many elements as the range [first,last), with each element constructed from its corresponding element in that range
             template <class InputIterator>
             map(InputIterator first, InputIterator last, const key_compare comp = key_compare(), const allocator_type& alloc = allocator_type()) :
-            _comp(comp), _allocator(alloc), _node_allocator(), _val(ft::make_pair(key_type(), mapped_type())), _root(rbt_create_null_node(_val, NULL)), _size(0), _begin(rbt_create_null_node(_val, NULL)), _end(rbt_create_null_node(_val, NULL))
-
+            _comp(comp), _allocator(alloc), _node_allocator(), _size(0), _root(rbt_create_null_node( NULL)), _begin(rbt_create_null_node( NULL)), _end(rbt_create_null_node( NULL))
             {
-               // std::cout << "Enter constructor 2" << std::endl;
                 _begin->is_init = true;
                 _begin->right = _root;
                 _begin->left = _root;
@@ -123,15 +113,13 @@ namespace ft
                 _end->is_end = true;
                 _end->parent = _root;
          		this->insert(first, last);
-              //  std::cout << "Exit constructor 2" << std::endl;
                 return;
             }
 
             // 3. Copy constructor
             map(map const & src) :
-            _comp(src._comp), _allocator(src._allocator), _node_allocator(src._node_allocator), _val(src._val), _root(rbt_create_null_node(_val, NULL)), _size(0), _begin(rbt_create_null_node(_val, NULL)), _end(rbt_create_null_node(_val, NULL))
+            _comp(src._comp), _allocator(src._allocator), _node_allocator(src._node_allocator), _size(0), _root(rbt_create_null_node(NULL)), _begin(rbt_create_null_node(NULL)), _end(rbt_create_null_node(NULL))
             {
-               // std::cout << "Enter constructor 3" << std::endl;
                 _begin->is_init = true;
                 _begin->right = _root;
                 _begin->left = _root;
@@ -141,12 +129,7 @@ namespace ft
                 _end->is_end = true;
                 _end->parent = _root;
     		    for(const_iterator it = src.begin(); it != src.end(); it++)
-                {
-                    //std::cout  << "end = " << src.end()->first << std::endl;
-                    //std::cout  << "it = " << it->first << std::endl;
                     this->insert(*it);
-                }
-               // std::cout << "Exit constructor 3" << std::endl;
             }
 
             virtual ~map(void)
@@ -158,134 +141,78 @@ namespace ft
             
             map & operator=(map const & src)
             {
-               // std::cout << "Enter operator=" << std::endl;
-
                 if (this != &src)
                 {
                     this->clear();
                     this->_comp = src._comp;               
                     for(const_iterator it = src.begin(); it != src.end(); it++)
-				    {
                         this->insert(*it);
-
-                    }
                 }
-               // std::cout << "Exit operator=" << std::endl;
                 return *this;
             }
+
 
             //---> Iterators
 
             iterator begin() 
             {
                 rbt_node* tmp;
-
                 if (_root->is_null == false)
                     tmp = _root->getMinChild();
                 else
                     tmp = _end;
-                //  tmp = _begin->right;
-
                 return iterator(tmp);
             }
 
             const_iterator begin() const
             {
                 rbt_node* tmp;
-
                 if (_root->is_null == false)
                     tmp = _root->getMinChild();
                 else
                     tmp = _end;
-
-                   // tmp = _begin->right;
                 return const_iterator(tmp);
-
             }
 
             iterator end() 
             {
-               
-               
-               /* rbt_node* tmp;
-                if (_root->is_null == false)
-                    tmp = _root->getMaxChild();
-                else
-                    tmp = _begin;
-                return iterator(tmp->right); // pas sure*/
-
-            //    iterator it = _end;
-             //   std::cout << "end() = " << it->first << std::endl;
-              //  print_node(_end);
-
                 return (iterator(_end));
             }
 
             const_iterator end() const
             {
-                
-                /*rbt_node* tmp;
-                   
-                if (_root->is_null == false)
-                    tmp = _root->getMaxChild();
-                else
-                    tmp = _begin;
-                return const_iterator(tmp->right); // pas sure*/
                 return (const_iterator(_end));
-
             }
 
             reverse_iterator rbegin()
             {
                 return reverse_iterator(_end);
-
-              // return reverse_iterator(_end->parent);
             }
             
             const_reverse_iterator rbegin() const
             {
                 return const_reverse_iterator(_end);
-
-              // return const_reverse_iterator(_end->parent);
             }
             
             reverse_iterator rend() 
             {
-               //return reverse_iterator(_begin);
-              return reverse_iterator(begin());
+                return reverse_iterator(begin());
             }
             
             const_reverse_iterator rend() const
             {
-                //return reverse_iterator(_begin);
                 return const_reverse_iterator(begin());
             }
         
         
             //---> Elements Access
-            
                        
             mapped_type& operator[](const key_type& k)
             {
                 //if k matches the key of an element in the container, the function returns a reference to its mapped value
                 //If k does not match, the function inserts a new element with that key and returns a reference to its mapped value.
                 //Notice that this always increases the container size by one, even if no mapped value is assigned to the element (the element is constructed using its default constructor).
-               /* rbt_node* tmp = rbt_search_root(k);
-                if (tmp->is_null == false)
-                {
-                    iterator it = iterator(tmp);
-                    return *(ft::make_pair<iterator,bool> (it, false));
-                }
-                else
-                {
-                    rbt_insert(value_type(k, mapped_type()));
-                    iterator it = rbt_search_root(k);
-                    return *(ft::make_pair<iterator, bool> (it,true));
-                }
-                */
-
                 return (*((this->insert(value_type(k,mapped_type()))).first)).second; // defini sur cpp
-
             }
         
             //---> Capacity
@@ -311,12 +238,10 @@ namespace ft
             void clear()
             {
                 this->rbt_clear_tree(_root);
-                _root = rbt_create_null_node(_val, _begin);
-                _root->parent = _begin;
+                _root = rbt_create_null_node(_begin);
                 _begin->right = _root;
                 _begin->left = _root;
                 _end->parent = _root;
-               // _root->right = _end;
                 _size = 0;
             }
 
@@ -328,28 +253,12 @@ namespace ft
                 rbt_node* tmp = rbt_search_root(val.first);
 
                 if (tmp->is_null == true)
-                {
-                   // std::cout << "value not found -> to insert" << std::endl;
                     rbt_insert(val);
-                }
                 iterator it = iterator(rbt_search_root(val.first));
-
                 if (this->_size == old_size)
                     return ft::make_pair<iterator,bool> (it, false);
                 else
                     return ft::make_pair<iterator, bool> (it,true);
-
-
-
-
-/*
-                size_type old_size = this->_size;
-                this->_size += this->rbt_insert(val); // return 1 if an element was inserted
-                iterator it = iterator(rbt_search_root(val.first));
-                if (this->_size == old_size)
-                    return ft::make_pair<iterator,bool> (it, false);
-                else
-                    return ft::make_pair<iterator, bool> (it,true);*/
             }
 
             iterator insert(iterator position, const value_type& val)
@@ -379,11 +288,7 @@ namespace ft
                 if (tmp->is_null == false)
                 {
                    if (rbt_search_root(tmp->content.first))
-                    {
-                       // std::cout << "\ncontent found!" << std::endl;
-                      //  std::cout << "to delete = " << tmp->content.first << std::endl;
                       rbt_delete(tmp->content.first, position);
-                    }
                 }
             }
 
@@ -393,9 +298,7 @@ namespace ft
                 rbt_node* tmp = rbt_search_root(k);
                 size_type size =  this->size();
                 if (tmp->is_null == false)
-                {
                     rbt_delete(k, iterator(tmp));
-                }
                 return this->size() != size;
             }
 
@@ -413,17 +316,14 @@ namespace ft
                 while (i < diff)
                 {
                     rbt_node* tmp = rbt_search_root(first->first);
-
                     if (tmp)
-                    {
                         first = rbt_delete(tmp->content.first, first);
-                    }
                     first++;
                     i++;
                 }
             }
             
-            void swap (map& src) // a modifier si attributs changent!!!
+            void swap (map& src)
             {
                 key_compare tmp_comp = src._comp;
                 allocator_type tmp_allocator = src._allocator;
@@ -472,10 +372,7 @@ namespace ft
                 if (tmp->is_null == false)
                     return (iterator(tmp));
                 else
-                {
-                  //  std::cout << "end!" << std::endl;
                     return end();
-                }
             }
             
             const_iterator find(const key_type& k) const
@@ -570,15 +467,9 @@ namespace ft
 
         protected:
             
-            rbt_node* rbt_create_null_node(value_type const & data, rbt_node *parent)
+            rbt_node* rbt_create_null_node(rbt_node *parent)
             {
-             //   std::cout << " *** Enter rbt_create_null_node " << std::endl;
-
                 rbt_node* new_node = _node_allocator.allocate(1);
-
-               // _allocator.construct(&new_node->content, data);
-                (void)data;
-                //_node_allocator.construct(new_node, rbt_node());
                 new_node->left = NULL;
                 new_node->right = NULL;
                 new_node->parent = parent;
@@ -586,16 +477,12 @@ namespace ft
                 new_node->is_null = true;
                 new_node->is_init = false;
                 new_node->is_end = false;
-            //    std::cout << " *** Exit rbt_create_null_node " << std::endl;
-
                 return new_node;
             }
 
             rbt_node* rbt_create_node(value_type const & data)
             {
-      //         std::cout << " *** Enter rbt_create_node" << std::endl;
-               //std::cout << " key = " << data.first << " | value = " << data.second << std::endl;
-
+        //      std::cout << " *** Enter rbt_create_node" << std::endl;
                 rbt_node* new_node = _node_allocator.allocate(1);
                 new_node->parent = NULL;
                 new_node->right = NULL;
@@ -604,68 +491,23 @@ namespace ft
                 new_node->is_init = false;
                 new_node->is_red = true;
                 new_node->is_end = false;
-
-              /*  std::cout << "1. after allocate:" << std::endl;
-                print_node(new_node);
-
-                rbt_node* left = rbt_create_null_node(data);
-                 new_node->left = left;
-
-                std::cout << "2. after create left:" << std::endl;
-                print_node(new_node);   
-
-                rbt_node* right = rbt_create_null_node(data);
-                new_node->right = right;
-
-                std::cout << "3. after create right:" << std::endl;
-                print_node(new_node);  
-            */
-                //_node_allocator.construct(new_node, rbt_node()); 
-
                 _allocator.construct(&new_node->content, data);
-                
-              /*  std::cout << "4. after construct:" << std::endl;
-                print_node(new_node);  
-
-             std::cout << " *** Exit rbt_create_node "<< std::endl;*/
-
-
+        //      std::cout << " *** Exit rbt_create_node "<< std::endl;
                 return new_node;
             }
 
             void rbt_free_node(rbt_node *node)
             {
-                
-           //     std::cout << " Enter rbt_free node" << std::endl;
-
-               /* if (node && node->is_null == false)
-                    _node_allocator.destroy(node); //node->->content?;
-                */
                 if (node->is_null == false)
                     _allocator.destroy(&node->content);
                 _node_allocator.deallocate(node, 1);
-              //  std::cout << "Exit rbt_free node" << std::endl;
-            }
-
-            void rbt_convert_to_null(rbt_node *node)
-            {
-                //_node_allocator.destroy(node);
-                _allocator.destroy(&node->content);
-                rbt_free_node(node->left);
-                //if (node->right == _end)
-                
-                rbt_free_node(node->right);
-                node->is_red = false;
-                node->is_null = true;
-                node->left = NULL;
-                node->right = NULL;
             }
 
             void rbt_clear_tree(rbt_node* node)
             {
                 if (node->left)
                     rbt_clear_tree(node->left);
-                if (node->right && node->right->is_end == false) // node->right != end ?
+                if (node->right && node->right->is_end == false)
                     rbt_clear_tree(node->right);
                 this->rbt_free_node(node);
             }
@@ -674,8 +516,6 @@ namespace ft
             {
                 while (src && src->is_null == false) 
                 {
-
-
                     if (this->_comp(key, src->content.first) == true)
                         src = src->left;
                     else if (this->_comp(src->content.first, key) == true)
@@ -691,7 +531,7 @@ namespace ft
                 return rbt_search(_root, key);
             }
 
-            void rbt_rotate_right(rbt_node* node)//parent, rbdt_node* grand_parent)
+            void rbt_rotate_right(rbt_node* node)
             {
                 rbt_node* tmp = node->left->right;
 
@@ -731,13 +571,12 @@ namespace ft
                     _root = node->parent;
             }
            
-            void rbt_insert_fix_violation(rbt_node *node) // !! ROOT A SUIVRE
+            void rbt_insert_fix_violation(rbt_node *node)
             {
                 if (node != _root)
                 {
                     if(node->parent->is_red == false)
                         return;
-                    
                     if (node->parent == _root)
                     {
                         node->parent->is_red = false;
@@ -746,8 +585,6 @@ namespace ft
 
                     rbt_node* uncle = node->getUncle();
                     rbt_node* grand_parent = node->getGrandParent();
-
-
                     if (uncle && grand_parent)
                     {
                         if (uncle && uncle->is_red == true)
@@ -755,8 +592,7 @@ namespace ft
                             node->parent->is_red = false;
                             uncle->is_red = false;
                             grand_parent->is_red = true;
-                            rbt_insert_fix_violation(grand_parent);
-                            
+                            rbt_insert_fix_violation(grand_parent);    
                         }
 
                         else // !uncle || uncle->is_red == false // 4 cases
@@ -764,8 +600,6 @@ namespace ft
                             //Left Left Case==> Line on left, right rotation of grandfather
                             if (node == node->parent->left && node->parent == grand_parent->left)
                             {
-                                //std::cout << "\n***** LEFT LEFT CASE *** " << std::endl;
-
                                 rbt_rotate_right(grand_parent);
                                 grand_parent->is_red = true;
                                 node->parent->is_red = false;
@@ -774,7 +608,6 @@ namespace ft
                             //Left Right  ==> triangle < : left rotation of parent then right rotation of grand father
                             else if (node == node->parent->right && node->parent == grand_parent->left)
                             {
-                               // std::cout << "\n***** LEFT RIGHT *** " << std::endl;                             
                                 rbt_rotate_left(node->parent);
                                 rbt_rotate_right(grand_parent);
                                 grand_parent->is_red = true;
@@ -784,7 +617,6 @@ namespace ft
                             // Right Right  ==> line on right, left rotation of grand father
                             else if (node == node->parent->right && node->parent == grand_parent->right)
                             {
-                               // std::cout << "\n***** RIGHT RIGHTCASE *** " << std::endl;
                                 rbt_rotate_left(grand_parent);
                                 grand_parent->is_red = true;
                                 node->parent->is_red = false;
@@ -793,7 +625,6 @@ namespace ft
                             // Right Left Case ==> triangle >
                             else if (node == node->parent->left && node->parent == grand_parent->right)
                             {
-                               // std::cout << "\n***** RIGHT LEFT CASE *** " << std::endl;
                                 rbt_rotate_right(node->parent);
                                 rbt_rotate_left(grand_parent);
                                 grand_parent->is_red = true;
@@ -804,63 +635,37 @@ namespace ft
                }
             }
             
-            size_type rbt_insert(value_type const & data)
+            void rbt_insert(value_type const & data)
             {
-              
            /*   std::cout << "\nSTATUS TREE INIT: " << std::endl;
                print_rbt();
                 std::cout << std::endl;*/
-                /*
-                std::cout << "\n_end:" << std::endl;
-                print_node(_end);
-                std::cout << std::endl;
-
-                 std::cout << "\n_root:" << std::endl;
-                print_node(_root);
-                std::cout << std::endl;*/
-
                 rbt_node* new_node = rbt_create_node(data);
-
-              
-           /*   std::cout << "\nnew node:" << std::endl;
-                print_node(new_node);
-                std::cout << std::endl;*/
-
-
-               // std::cout << "current tree:" << std::endl;
-               // print_rbt();
-
                 
-                if (_root->is_null == true)
+                if (_root->is_null == true) //CASE 1ST NODE IN THE TREE
                 {
-                //    std::cout << "*** ROOT is  NULL ***" << std::endl;
-
+                //   std::cout << "*** ROOT is  NULL ***" << std::endl;
                     new_node->is_red = false;
                     rbt_free_node(_root);
                     _root = new_node;
                     _begin->right = _root;
                     _begin->left = _root;
                     _root->parent = _begin;
-
-                   // rbt_free_node(_root->right);
                     _root->right = _end;
-                    _root->left = rbt_create_null_node(data, _root); 
+                    _root->left = rbt_create_null_node(_root); 
                     _end->parent = _root;
-
                     this->_size++;
+                //  std::cout << "\nSTATUS TREE FINAL (root): " << std::endl;
+                //  print_rbt();
+                    return;
+                }
 
-
-                //    std::cout << "\nSTATUS TREE FINAL (root): " << std::endl;
-                  //  print_rbt();
-                    return(1);
-                }   
                 else
                 {
                     rbt_node* tmp = _root;
                     bool is_left_child;
                     while (tmp && tmp->is_null == false)
                     {
-
                         new_node->parent = tmp;
                         if (_comp(tmp->content.first, new_node->content.first) == true) // si new_node est plus grand
                         {   
@@ -875,9 +680,7 @@ namespace ft
                         else //node already exist
                         {
                             rbt_free_node(new_node);
-                         //   std::cout << "\nSTATUS TREE FINAL (already exist): " << std::endl;
-                         //   print_rbt();
-                            return (0);
+                            return;
                         }
                     }
                         
@@ -885,15 +688,14 @@ namespace ft
                     {
                         tmp->parent->left = new_node;
                         rbt_free_node(tmp);
-                        new_node->left = rbt_create_null_node(data, new_node);
-                        new_node->right = rbt_create_null_node(data, new_node);
-                       // new_node->parent = tmp;
+                        new_node->left = rbt_create_null_node(new_node);
+                        new_node->right = rbt_create_null_node(new_node);
                     }
                     else
                     {
                         tmp->parent->right = new_node;
-                        new_node->left = rbt_create_null_node(data, new_node);
-                        if (tmp->is_end == true)
+                        new_node->left = rbt_create_null_node(new_node);
+                        if (tmp->is_end == true) // pour gérer _end
                         {
                             new_node->right = _end; 
                             _end->parent = new_node;
@@ -901,60 +703,39 @@ namespace ft
                         else
                         {
                             rbt_free_node(tmp);
-                            new_node->right = rbt_create_null_node(data, new_node);
+                            new_node->right = rbt_create_null_node(new_node);
                         }
-
-                       // new_node->parent = tmp->parent;
                     }
-                    //rbt_free_node(tmp);
-
-                    //std::cout << "\nSTATUS TREE BEFORE FIX: " << std::endl;
-                    //print_rbt();
                     this->_size++;
                     rbt_insert_fix_violation(new_node);
-                  
                   /* std::cout << "\nSTATUS TREE FINAL (after insert fix): " << std::endl;
                     print_rbt();
                     std::cout << std::endl;*/
-                    return(1);
+                    return;
                 }
             }
-
  
             //Node to delete has two NULL children
-            void rbt_delete_case1(rbt_node *to_delete, rbt_node *child)
-            {
-                (void)child;
-              /*  if (to_delete ==_root)
-                {
-                    _root = rbt_create_null_node(_val);;
-                }*/
-             
-             //   rbt_convert_to_null(to_delete);
-
-                //_node_allocator.destroy(node);
+            void rbt_delete_case1(rbt_node *to_delete)
+            {          
                 _allocator.destroy(&to_delete->content);
                 rbt_free_node(to_delete->left);
-                //if (node->right == _end)
                 if (to_delete->right == _end)
                 {
                     if (to_delete->parent->is_init == false)
                     {
                         to_delete->parent->right = _end; 
                         _end->parent = to_delete->parent;
-//                      rbt_free_node(to_delete->right);
                         rbt_free_node(to_delete);
                     }
                     else
                     {
-                        _root = rbt_create_null_node(_begin->content, _begin);
+                        _root = rbt_create_null_node( _begin);                    
                         _begin->left = _root;
                         _begin->right = _root;
                         _root->right = _end; 
                         _end->parent = _root; 
-//                      rbt_free_node(to_delete->right);
                         rbt_free_node(to_delete);
-
                     }  
                 }              
                 else 
@@ -965,18 +746,6 @@ namespace ft
                     to_delete->left = NULL;
                     to_delete->right = NULL;
                 }
-            
-                /*
-                else if (to_delete == to_delete->parent->left)
-                {
-                    to_delete->parent->left = child;
-                    child->parent = to_delete->parent;
-                }
-                else
-                {
-                    to_delete->parent->right = child;
-                    child->parent = to_delete->parent;
-                }*/
             }
             
             //Node to delete has one NULL children
@@ -1031,34 +800,32 @@ namespace ft
                     if (sibling == replacement->parent->right)
                         rbt_rotate_left(replacement->parent);
                     else
-                        rbt_rotate_right(replacement->parent); // ajout, a verifier
+                        rbt_rotate_right(replacement->parent);
                     rbt_double_black_solve(replacement);
                 }
 
-                //case 3 (mirror)
+                //case 3 (mirror) --> works for both mirror
                 else if (replacement->parent->is_red == false
                             && sibling->is_red == false
                             && sibling->left->is_red == false
                             && sibling->right->is_red == false)
                 {
-                    //works for both mirror
                     sibling->is_red =  true;
                     rbt_double_black_solve(replacement->parent);
                 }
                 
-                //case 4 (mirror) --> terminate case
+                //case 4 (mirror) --> terminate case --> works for both mirror
                 else if (replacement->parent->is_red == true
                             && sibling->is_red == false
                             && sibling->left->is_red == false 
                             && sibling->right->is_red == false)
                 {
-                    //works for both mirror
                     replacement->parent->is_red = false;
                     sibling->is_red =true;
                     return;
                 }
 
-                //case 5   // miror ? TBC
+                //case 5 
                 else if (replacement == replacement->parent->left
                             && replacement->parent->is_red == false 
                             && sibling->is_red == false
@@ -1091,8 +858,7 @@ namespace ft
                     replacement->parent->is_red = false;
                     sibling->right->is_red = false;
                     rbt_rotate_left(replacement->parent);                    
-                }
-                
+                } 
                 else if (replacement == replacement->parent->right
                             && sibling->is_red == false
                             && sibling->left->is_red == true)
@@ -1101,7 +867,6 @@ namespace ft
                     replacement->parent->is_red = false;
                     sibling->left->is_red = false;
                     rbt_rotate_right(replacement->parent);
-                    //
                 }
 
                 return;
@@ -1115,56 +880,32 @@ namespace ft
                     return;
                 }
                 else //node deleted equal to double black
-                {
                     rbt_double_black_solve(replacement);
-                }
             }
 
             iterator rbt_delete(const key_type& key, iterator position)
             {
-
-           /*  std::cout << "\nTO DELETE -  " << key << std::endl;
-
-             std::cout << "\nSTATUS TREE INIT DELETE: " << std::endl;
+            /*  std::cout << "\nSTATUS TREE INIT DELETE: " << std::endl;
                 std::cout << "root = " << _root->content.first << std::endl;
                 print_rbt();
                 std::cout << std::endl;*/
-
                 
                 rbt_node* to_delete = rbt_search(_root, key);
-
                 rbt_node* replacement;
-                bool bol_change = 0;
+                bool bol_change = 0; // sert a retrouver le bon iterator quand on change l'allocation mémoire
 
                 if (to_delete->is_null == true)
-                {
-                    //std::cout << "-------> exit rbt delete 0" << std::endl;
                     return position;
-                }
-                
-           //    std::cout << "*******to_delete = " << to_delete->content.first << std::endl;
-             //  print_node(to_delete);
 
                 //Initital steps --> convert to a 0 or 1 child case 
                 if (to_delete->left->is_null == false && to_delete->right->is_null == false)
                 {
                    //std::cout << "\n** Case 2  non null childs --- > conversion **" << std::endl;
-
-                    //std::cout << "position = " << position->first << std::endl;
-
                     replacement = to_delete;
                     to_delete = to_delete->right->getMinChild();
-
-
                     _allocator.destroy(&replacement->content);
                     _allocator.construct(&replacement->content, to_delete->content);
-
                     bol_change = 1;
-                 //   std::cout << "AFTER\n";
-                   // print_rbt();
-                   // position = iterator(--(replacement)); 
-                   // std::cout << "position = " << position->first << std::endl;
-          
                 }
                 
                 bool original_is_red = to_delete->is_red;
@@ -1175,127 +916,97 @@ namespace ft
                     replacement = to_delete;
                     if (to_delete->right == _end)
                         replacement = _end;
-                    rbt_delete_case1(to_delete, to_delete->right);
-       //             rbt_free_node(to_delete->left);
-
+                    rbt_delete_case1(to_delete);
                 }
                 else if (to_delete->left->is_null == false)
                 {
-                //    std::cout << "\n** Case 1 left child non null**" << std::endl;
+                //  std::cout << "\n** Case 1 left child non null**" << std::endl;
                     replacement = to_delete->left;
                     rbt_delete_case2(to_delete, to_delete->left, to_delete->right);
-                  //  rbt_free_node(to_delete->right);
-
                 }
                 else if (to_delete->right->is_null == false)
                 {
-                //    std::cout << "\n** Case 1 right child non null**" << std::endl;
+                //  std::cout << "\n** Case 1 right child non null**" << std::endl;
                     replacement = to_delete->right;
                     rbt_delete_case2(to_delete, to_delete->right, to_delete->left);
-                   // rbt_free_node(to_delete->left);
                 }                    
-
-               // replacement = to_delete;
-
-                //rbt_convert_to_null(to_delete);
                 this->_size--;
-             //   std::cout << "replacement = " << replacement->content.first << std::endl;
-             //   std::cout << "STATUS BEFORE FIX " << std::endl;
-             //   print_rbt();
-
                 if (_root->is_null == false)
-                    rbt_delete_fix_violation(original_is_red, replacement); 
-              //  std::cout << "-------> exit rbt delete with 1" << std::endl; 
-
-
+                    rbt_delete_fix_violation(original_is_red, replacement);
                 if(bol_change == 1)
                     position--;
              /*   std::cout << "\nSTATUS TREE DELETE END: " << std::endl;
-                std::cout << "\n_begin = " <<  std::endl;
-                print_node(_begin);
-                
-                std::cout << "\n_root = " <<  std::endl;
-                print_node(_root);
-
-                std::cout << "\n_end = " <<  std::endl;
-                print_node(_end);
-
-                std::cout << "\ntree:" << std::endl;
                 print_rbt();
-                                   std::cout << std::endl;*/
+                 std::cout << std::endl;*/
                 return position;
             }
 
         public:
 
-        void print_rbt() const
-		{
-			//std::cout << "size = " << this->size() << std::endl;
-			std::cout << std::endl;
-			print_rbt(this->_root);
-			return;
-		}
-
-		void print_rbt(rbt_node* node) const
-		{
-			if (node == NULL) {
-				return;
-			}
-			std::cout << std::endl;
-            print_node(node);
-            if (node->left && node->left->is_null == false)
-			    print_rbt(node->left);
-            if (node->right && node->right->is_null == false)
-                print_rbt(node->right);
-        }
-
-        void print_node(rbt_node* node) const
-		{
-			if (node == NULL) {
-				std::cout << "NULL" << std::endl;
+            void print_rbt() const
+            {
+                std::cout << std::endl;
+                print_rbt(this->_root);
                 return;
-			}
-			std::cout << std::endl;
-			if (node->is_red) 
-				std::cout << RED;
-			
-			std::cout << "val : " << node->content.first << " | " << node->content.second << std::endl;
-			std::cout << "is_null = " << node->is_null << " | is_init = " << node->is_init << " | is_end = " << node->is_end << std::endl;
-            std::cout << "parent : ";
-			if (node->parent) 
-            {
-                if (node->parent == _begin)
-				    std::cout << "BEGIN" << std::endl;
-                else                
-				    std::cout << node->parent->content.first << std::endl;
             }
-            else
-                std::cout << "NULL" << std::endl;
 
-			std::cout << "left : ";
-			if (node->left == NULL)
-                std::cout << "*NULL NODE*" << std::endl;
-            else if (node->left->is_null == true) 
-				std::cout << "NULL LEAF" << std::endl;
-			else if (node->left->is_null == false) 
-				std::cout << node->left->content.first << std::endl;
-			
-			std::cout << "right : ";
-			if (node->right == NULL)
-                std::cout << "*NULL NODE*" << std::endl;
-            else if (node->right->is_null == true)
+            void print_rbt(rbt_node* node) const
             {
-                if (node->right == _end)
-                    std::cout << "_end" << std::endl;
-                else
-				    std::cout << "NULL LEAF" << std::endl;
+                if (node == NULL)
+                    return;
+                std::cout << std::endl;
+                print_node(node);
+                if (node->left && node->left->is_null == false)
+                    print_rbt(node->left);
+                if (node->right && node->right->is_null == false)
+                    print_rbt(node->right);
             }
-			else if (node->right->is_null == false) 
-				std::cout << node->right->content.first << std::endl;
-            std::cout << RESET;
-      }
-              
+
+            void print_node(rbt_node* node) const
+            {
+                if (node == NULL)
+                {
+                    std::cout << "NULL" << std::endl;
+                    return;
+                }
+                std::cout << std::endl;
+                if (node->is_red) 
+                    std::cout << RED;
+                std::cout << "val : " << node->content.first << " | " << node->content.second << std::endl;
+                std::cout << "is_null = " << node->is_null << " | is_init = " << node->is_init << " | is_end = " << node->is_end << std::endl;
+                std::cout << "parent : ";
+                if (node->parent) 
+                {
+                    if (node->parent == _begin)
+                        std::cout << "BEGIN" << std::endl;
+                    else                
+                        std::cout << node->parent->content.first << std::endl;
+                }
+                else
+                    std::cout << "NULL" << std::endl;
+
+                std::cout << "left : ";
+                if (node->left == NULL)
+                    std::cout << "*NULL NODE*" << std::endl;
+                else if (node->left->is_null == true) 
+                    std::cout << "NULL LEAF" << std::endl;
+                else if (node->left->is_null == false) 
+                    std::cout << node->left->content.first << std::endl;
                 
+                std::cout << "right : ";
+                if (node->right == NULL)
+                    std::cout << "*NULL NODE*" << std::endl;
+                else if (node->right->is_null == true)
+                {
+                    if (node->right == _end)
+                        std::cout << "_end" << std::endl;
+                    else
+                        std::cout << "NULL LEAF" << std::endl;
+                }
+                else if (node->right->is_null == false) 
+                    std::cout << node->right->content.first << std::endl;
+                std::cout << RESET;
+        }               
     };
 
     // ********** NON MEMBER FUNCTIONS OVERLOARDS ********** 
@@ -1349,7 +1060,6 @@ namespace ft
 		lhs.swap(rhs);
 		return;
 	}
-
 }
 
 #endif
