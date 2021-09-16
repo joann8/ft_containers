@@ -1,8 +1,16 @@
 NAME= ft_containers
 
-SRCS= main_test.cpp common.cpp test_map.cpp test_vector.cpp
+SRCS= main_test.cpp common.cpp test_map.cpp test_vector.cpp test_stack.cpp
+
+SRCS_BONUS = test_set_bonus.cpp
+
+SRCS_TESTS = vector.cpp map.cpp stack.cpp set.cpp main.cpp
 
 OBJS= $(addprefix srcs/, $(SRCS:.cpp=.o))
+
+OBJS_BONUS= $(addprefix srcs/, $(SRCS_BONUS:.cpp=.o))
+
+OBJS_TESTS= $(addprefix srcs/, $(SRCS_TESTS:.cpp=.o))
 
 CC= clang++ -g
 
@@ -20,9 +28,17 @@ all: $(NAME)
 
 clean:
 	rm -f $(OBJS)
+	rm -f $(OBJS_BONUS)
 
 fclean: clean
 	rm -f $(NAME)
+
+bonus: $(OBJS) $(OBJS_BONUS)
+	$(CC) $(CFLAGS) $(HEADER) -c $< -o $(<:.cpp=.o)
+
+tests: $(OBJS_TESTS)
+	$(CC) $(CFLAGS) $(HEADER) -c $< -o $(<:.cpp=.o)
+	
 
 re: fclean all	
 

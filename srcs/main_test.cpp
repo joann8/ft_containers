@@ -6,20 +6,20 @@
 /*   By: lsoulier <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/19 13:15:20 by lsoulier          #+#    #+#             */
-/*   Updated: 2021/09/10 10:53:39 by jacher           ###   ########.fr       */
+/*   Updated: 2021/09/16 14:29:55 by jacher           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <iostream>
 #include <string>
-//#include "test_queue.hpp"
 #include "test_vector.hpp"
 #include "test_map.hpp"
+#include "test_stack.hpp"
 
 int main(int argc, char **argv) 
 {
-	std::string containers[2] = {"vector", "map"};
-	void (*test_functions[2])(void) = {&test_vector, &test_map};
+	std::string containers[3] = {"vector", "map", "stack"};
+	void (*test_functions[3])(void) = {&test_vector, &test_map, &test_stack};
 
 	if(argc != 2) 
 	{
@@ -27,7 +27,7 @@ int main(int argc, char **argv)
 	} 
 	else 
 	{
-		for(size_t i = 0; i < 2; i++) 
+		for(size_t i = 0; i < 3; i++) 
 		{
 			if (argv[1] == containers[i]) 
 			{

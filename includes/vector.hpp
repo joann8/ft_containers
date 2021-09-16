@@ -481,7 +481,7 @@ namespace ft
             
             allocator_type get_allocator() const
             {
-                this->_allocator;
+                return this->_allocator;
             }
     };
     

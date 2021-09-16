@@ -6,7 +6,7 @@
 /*   By: louise <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/13 11:46:44 by louise            #+#    #+#             */
-/*   Updated: 2021/09/14 17:33:24 by jacher           ###   ########.fr       */
+/*   Updated: 2021/09/15 18:14:14 by jacher           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,12 +116,12 @@ void test_map() {
 	std::cout << std::endl << "This test will focus on \033[31;1;4mswap()\033[0m:" << std::endl;
 	ft::map<std::string, std::string> test_swap;
 	std::cout << "Let's create a second map with 'alakazam' => 'psy', 'dracofeau' => 'feu' and 'coconfort' => 'poison'" << std::endl;
-//	test_swap.insert(ft::make_pair("alakazam", "psy"));
-//	test_swap.insert(ft::make_pair("dracofeau", "feu"));
-//	test_swap.insert(ft::make_pair("coconfort", "poison"));
+	test_swap.insert(ft::make_pair("alakazam", "psy"));
+	test_swap.insert(ft::make_pair("dracofeau", "feu"));
+	test_swap.insert(ft::make_pair("coconfort", "poison"));
 	printState(test_swap);
 	std::cout << "Now let's use swap and print state of the first then the second container" << std::endl;
-//	test_insert.swap(test_swap);
+	test_insert.swap(test_swap);
 	printState(test_insert);
 	printState(test_swap);
 
