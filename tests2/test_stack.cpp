@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   test_stack.cpp                                     :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: lsoulier <lsoulier@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/03/01 23:45:27 by lsoulier          #+#    #+#             */
-/*   Updated: 2021/09/16 14:40:18 by jacher           ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "test_stack.hpp"
 
 void test_stack_constructor(void) {
@@ -56,8 +44,10 @@ void test_stack_pop(void) {
 	std::cout << "Now let's use pop(): " << std::endl;
 	test_pop.pop();
 	std::cout << "Let's see top() of the stack : " << test_pop.top() << std::endl;
+	std::cout << "Now let's use pop(): " << std::endl;
 	test_pop.pop();
 	std::cout << "Let's see top() of the stack : " << test_pop.top() << std::endl;
+	std::cout << "Now let's use pop(): " << std::endl;
 	test_pop.pop();
 	std::cout << "Let's see top() of the stack : " << test_pop.top() << std::endl;
 }

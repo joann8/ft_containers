@@ -1,44 +1,41 @@
+FT_NAME=ft
+
+STD_NAME = std
+
 NAME= ft_containers
 
-SRCS= main_test.cpp common.cpp test_map.cpp test_vector.cpp test_stack.cpp
+SRCS_2= main_test.cpp common.cpp test_map.cpp test_vector.cpp test_stack.cpp test_set.cpp
 
-SRCS_BONUS = test_set_bonus.cpp
+SRCS= tests/main.cpp tests/map.cpp tests/vector.cpp tests/stack.cpp tests/set.cpp
 
-SRCS_TESTS = vector.cpp map.cpp stack.cpp set.cpp main.cpp
+OBJS= $(addprefix tests2/, $(SRCS_2:.cpp=.o))
 
-OBJS= $(addprefix srcs/, $(SRCS:.cpp=.o))
-
-OBJS_BONUS= $(addprefix srcs/, $(SRCS_BONUS:.cpp=.o))
-
-OBJS_TESTS= $(addprefix srcs/, $(SRCS_TESTS:.cpp=.o))
-
-CC= clang++ -g
+CC= clang++
 
 CFLAGS= -Wall -Wextra -Werror -std=c++98
 
-HEADER= -I includes
+HEADER= -I ./includes/
 
 .cpp.o: ./includes/*.hpp
 	$(CC) $(CFLAGS) $(HEADER) -c $< -o $(<:.cpp=.o)
 
-$(NAME): $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -o $(NAME)
+$(FT_NAME): $(SRCS)
+	$(CC) $(HEADER) $(CFLAGS) -DNAMESPACE=ft -o $(FT_NAME) $(SRCS)
 
-all: $(NAME)
+$(STD_NAME): $(SRCS)
+	$(CC) $(HEADER) $(CFLAGS) -DNAMESPACE=std -o $(STD_NAME) $(SRCS)
+
+$(NAME):$(OBJS)
+	$(CC) $(CFLAGS) $(OBJS) -o $(NAME)
+	
 
 clean:
 	rm -f $(OBJS)
-	rm -f $(OBJS_BONUS)
 
-fclean: clean
+fclean: clean 
+	rm -f $(FT_NAME)
+	rm -f $(STD_NAME)
 	rm -f $(NAME)
-
-bonus: $(OBJS) $(OBJS_BONUS)
-	$(CC) $(CFLAGS) $(HEADER) -c $< -o $(<:.cpp=.o)
-
-tests: $(OBJS_TESTS)
-	$(CC) $(CFLAGS) $(HEADER) -c $< -o $(<:.cpp=.o)
-	
 
 re: fclean all	
 

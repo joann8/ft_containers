@@ -455,8 +455,9 @@ namespace ft
 
             void pop_back()
             {
-                this->_size--;
-                this->_allocator.destroy(this->_array + this->_size);
+                this->erase(--end());
+                //this->_size--;
+                //this->_allocator.destroy(this->_array + this->_size);
             }
             
             void swap (vector& src)

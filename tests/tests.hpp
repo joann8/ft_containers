@@ -10,7 +10,6 @@
 #include <iostream>
 #include <string>
 #include <climits>
-#include <list>
 #include <vector>
 #include <map>
 #include <stack>

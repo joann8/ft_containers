@@ -74,7 +74,7 @@ namespace ft
                 return;
             }
 
-            stack(const stack& src) : _current(src._current)
+          /*  stack(const stack& src) : _current(src._current)
             {
                 return;
             }
@@ -88,7 +88,7 @@ namespace ft
                 return *this;
             }
 
-            virtual ~stack() {return; }
+            virtual ~stack() { ; }*/
 
 
             //---> Others
