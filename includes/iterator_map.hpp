@@ -54,7 +54,6 @@ namespace ft
 
             //____________ Arithmetic operators ('classic')
 
-            // a verifier à l'exec pbm memoire?
             iterator_map& operator++() // find next value
             {
                 rbt_node* current = ptr;
@@ -86,12 +85,10 @@ namespace ft
                 return tmp;
             }
 
-            // a verifier à l'exec pbm memoire?
             iterator_map& operator--() // find previous value
             {
                 rbt_node* current = ptr;
                 rbt_node* res;
-
               
                 if (current->left && current->left->is_null == false) // si j'ai un fils gauche, je cherche la valeur max dans cette branche
                     res = current->left->getMaxChild();
@@ -100,10 +97,8 @@ namespace ft
                     rbt_node* parent = current->parent;
                     while (parent && parent->right != current && parent->is_init == false)
                     {
-
                         current = parent;
                         parent = current->parent;
-
                     }
                     if (parent->is_init == true)
                         res = ptr->left;
@@ -130,20 +125,6 @@ namespace ft
             {
                 return &this->ptr->content;
             }
-
-            ///____________ Relational operators
-    
-           /* // friend?
-            friend bool operator==(const iterator_map& lhs, const iterator_map& rhs) 
-            {
-                return (lhs.ptr == rhs.ptr);
-            }
-            
-            //friend?
-            friend bool operator!=(const iterator_map& lhs, const iterator_map& rhs)
-            {
-			    return (lhs.ptr != rhs.ptr);
-            }   */
 
             bool operator==(const iterator_map_const<T>& rhs) const
             {
@@ -251,7 +232,7 @@ namespace ft
                         parent = current->parent;
                     }
                     if (parent->is_init == true) //cas current == min
-                        res = ptr->left; // a verifier
+                        res = ptr->left;
                     else
                         res = parent;
                     res = parent;
@@ -277,22 +258,6 @@ namespace ft
                 return &(this->ptr->content);
             }
 
-            ///____________ Relational operators
-    
-            // friend?
-            /*
-            friend bool operator==(const iterator_map_const& lhs, const iterator_map_const& rhs) 
-            {
-                return (lhs.ptr == rhs.ptr);
-            }
-            
-            //friend?
-            friend bool operator!=(const iterator_map_const& lhs, const iterator_map_const& rhs)
-            {
-			    return (lhs.ptr != rhs.ptr);
-            }    
-            */
-
             bool operator==(const iterator_map_const& rhs) const
             {
                 return this->ptr == rhs.ptr;
@@ -302,7 +267,6 @@ namespace ft
             {
                 return this->ptr != rhs.ptr;
             }
-            
     };
  }
 #endif
