@@ -91,23 +91,25 @@ namespace ft
             {
                 rbt_node* current = ptr;
                 rbt_node* res;
+
               
                 if (current->left && current->left->is_null == false) // si j'ai un fils gauche, je cherche la valeur max dans cette branche
                     res = current->left->getMaxChild();
                 else
                 {
                     rbt_node* parent = current->parent;
-                    while (parent && parent->left == current && parent->is_init == false)
+                    while (parent && parent->right != current && parent->is_init == false)
                     {
+
                         current = parent;
                         parent = current->parent;
+
                     }
                     if (parent->is_init == true)
                         res = ptr->left;
                     else
                        res = parent;
                 }
-            
                 this->ptr = res;
                 return *this;
             }
@@ -148,7 +150,6 @@ namespace ft
                 return this->ptr == rhs.ptr;
             }
             
-            //friend?
             bool operator!=(const iterator_map_const<T>& rhs) const
             {
                 return this->ptr != rhs.ptr;
@@ -242,18 +243,18 @@ namespace ft
                     res = current->left->getMaxChild();
                 else
                 {
-                    rbt_node* current_parent = current->parent;
-                    while (current_parent && current == current_parent->left
-                            && current_parent->is_init == false) // tant que je suis un fils gauche
+                    rbt_node* parent = current->parent;
+                    while (parent && parent->right != current
+                            && parent->is_init == false) // tant que je suis un fils gauche
                     {
-                        current = current_parent;
-                        current_parent = current_parent->parent;
+                        current = parent;
+                        parent = current->parent;
                     }
-                    if (current_parent->is_init == true) //cas current == min
+                    if (parent->is_init == true) //cas current == min
                         res = ptr->left; // a verifier
                     else
-                        res = current_parent;
-                    res = current_parent;
+                        res = parent;
+                    res = parent;
                 }
                 this->ptr = res;
                 return *this;
