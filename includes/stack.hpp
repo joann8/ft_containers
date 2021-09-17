@@ -74,21 +74,7 @@ namespace ft
                 return;
             }
 
-          /*  stack(const stack& src) : _current(src._current)
-            {
-                return;
-            }
-
-            stack& operator=(const stack& src)
-            {
-                if (this != &src)
-                {
-                    _current = src._current;
-                }
-                return *this;
-            }
-
-            virtual ~stack() { ; }*/
+            virtual ~stack() { return; }
 
 
             //---> Others
@@ -133,11 +119,6 @@ namespace ft
 		friend bool operator> <T, Container>(stack const& lhs, stack const& rhs);
 		friend bool operator>= <T, Container>(stack const& lhs, stack const& rhs);
     };
-
-     // ********** NON MEMBER FUNCTIONS OVERLOARDS ********** 
-
-   
-       
 }
 
 #endif

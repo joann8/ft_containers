@@ -58,23 +58,26 @@ namespace ft
             {
                 rbt_node* current = ptr;
                 rbt_node* res;
-                if (current->right && current->right->is_null == false) // si j'ai un fils droit, je cherche la valeur min dans cette branche
-                    res = current->right->getMinChild();
-                else
+                if (current)
                 {
-                    rbt_node* parent = current->parent;                 
-                    while (parent && current == parent->right
-                            && parent->is_init == false) // tant que je suis un fils droit
-                    {
-                        current = parent;
-                        parent = parent->parent;
-                    }
-                    if (parent->is_init == true) //pour resoudre le cas root
-                        res = ptr->right;
+                    if (current->right && current->right->is_null == false) // si j'ai un fils droit, je cherche la valeur min dans cette branche
+                        res = current->right->getMinChild();
                     else
-                        res = parent;
+                    {
+                        rbt_node* parent = current->parent;                 
+                        while (parent && current == parent->right
+                                && parent->is_init == false) // tant que je suis un fils droit
+                        {
+                            current = parent;
+                            parent = parent->parent;
+                        }
+                        if (parent->is_init == true) //pour resoudre le cas root
+                            res = ptr->right;
+                        else
+                            res = parent;
+                    }
+                    this->ptr = res;
                 }
-                this->ptr = res;
                 return *this;
             }               
 
@@ -89,23 +92,26 @@ namespace ft
             {
                 rbt_node* current = ptr;
                 rbt_node* res;
-              
-                if (current->left && current->left->is_null == false) // si j'ai un fils gauche, je cherche la valeur max dans cette branche
-                    res = current->left->getMaxChild();
-                else
+
+                if (current)
                 {
-                    rbt_node* parent = current->parent;
-                    while (parent && parent->right != current && parent->is_init == false)
-                    {
-                        current = parent;
-                        parent = current->parent;
-                    }
-                    if (parent->is_init == true)
-                        res = ptr->left;
+                    if (current->left && current->left->is_null == false) // si j'ai un fils gauche, je cherche la valeur max dans cette branche
+                        res = current->left->getMaxChild();
                     else
-                       res = parent;
+                    {
+                        rbt_node* parent = current->parent;
+                        while (parent && parent->right != current && parent->is_init == false)
+                        {
+                            current = parent;
+                            parent = current->parent;
+                        }
+                        if (parent->is_init == true)
+                            res = ptr->left;
+                        else
+                        res = parent;
+                    }
+                    this->ptr = res;
                 }
-                this->ptr = res;
                 return *this;
             }
 
@@ -189,23 +195,26 @@ namespace ft
             {
                 rbt_node* current = ptr;
                 rbt_node* res;
-                if (current->right && current->right->is_null == false) // si j'ai un fils droit, je cherche la valeur min dans cette branche
-                    res = current->right->getMinChild();
-                else
+                if (current)
                 {
-                    rbt_node* current_parent = current->parent;                 
-                    while (current_parent && current == current_parent->right
-                            && current_parent->is_init == false) // tant que je suis un fils droit
-                    {
-                        current = current_parent;
-                        current_parent = current_parent->parent;
-                    }
-                    if (current_parent->is_init == true)
-                        res = ptr->right;
+                    if (current->right && current->right->is_null == false) // si j'ai un fils droit, je cherche la valeur min dans cette branche
+                        res = current->right->getMinChild();
                     else
-                        res = current_parent;
+                    {
+                        rbt_node* current_parent = current->parent;                 
+                        while (current_parent && current == current_parent->right
+                                && current_parent->is_init == false) // tant que je suis un fils droit
+                        {
+                            current = current_parent;
+                            current_parent = current_parent->parent;
+                        }
+                        if (current_parent->is_init == true)
+                            res = ptr->right;
+                        else
+                            res = current_parent;
+                    }
+                    this->ptr = res;
                 }
-                this->ptr = res;
                 return *this;
             }           
 
@@ -220,24 +229,27 @@ namespace ft
             {
                 rbt_node* current = ptr;
                 rbt_node* res;
-                if (current->left && current->left->is_null == false) // si j'ai un fils gauche, je cherche la valeur max dans cette branche
-                    res = current->left->getMaxChild();
-                else
+                if (current)
                 {
-                    rbt_node* parent = current->parent;
-                    while (parent && parent->right != current
-                            && parent->is_init == false) // tant que je suis un fils gauche
-                    {
-                        current = parent;
-                        parent = current->parent;
-                    }
-                    if (parent->is_init == true) //cas current == min
-                        res = ptr->left;
+                    if (current->left && current->left->is_null == false) // si j'ai un fils gauche, je cherche la valeur max dans cette branche
+                        res = current->left->getMaxChild();
                     else
+                    {
+                        rbt_node* parent = current->parent;
+                        while (parent && parent->right != current
+                                && parent->is_init == false) // tant que je suis un fils gauche
+                        {
+                            current = parent;
+                            parent = current->parent;
+                        }
+                        if (parent->is_init == true) //cas current == min
+                            res = ptr->left;
+                        else
+                            res = parent;
                         res = parent;
-                    res = parent;
+                    }
+                    this->ptr = res;
                 }
-                this->ptr = res;
                 return *this;
             }
 

@@ -47,9 +47,9 @@ void test_stack_pop(void) {
 	std::cout << "Now let's use pop(): " << std::endl;
 	test_pop.pop();
 	std::cout << "Let's see top() of the stack : " << test_pop.top() << std::endl;
-	std::cout << "Now let's use pop(): " << std::endl;
-	test_pop.pop();
-	std::cout << "Let's see top() of the stack : " << test_pop.top() << std::endl;
+//	std::cout << "Now let's use pop(): " << std::endl;
+//	test_pop.pop();
+//	std::cout << "Let's see top() of the stack : " << test_pop.top() << std::endl;
 }
 
 void test_stack_size(void) {
@@ -85,8 +85,8 @@ void test_stack_size(void) {
 
 void test_stack_comparison(void) {
 	std::cout << std::endl << "Theses tests will focus on \033[31;1;4mcomparison operators\033[0m: " << std::endl;
-	ft::stack<char> test_comparison1, test_comparison2;
-	std::cout << "Let's create two identical char stacks with 'a', 'b', 'c', 'd' : " << std::endl;
+	ft::stack<char> test_comparison1, test_comparison2, test_comparison3;
+	std::cout << "test's create two identical char stacks with 'a', 'b', 'c', 'd' : " << std::endl;
 	test_comparison1.push('a');
 	test_comparison2.push('a');
 	test_comparison1.push('b');
@@ -114,30 +114,26 @@ void test_stack_comparison(void) {
 
 	std::cout << std::endl << "Let's create one char stacks with 'a', 'b', 'c', 'd', ";
 	std::cout << "and a second stack with 'e', 'f', 'g', 'h'" << std::endl;
-	test_comparison2.pop();
-	test_comparison2.pop();
-	test_comparison2.pop();
-	test_comparison2.pop();
-	test_comparison2.push('e');
-	test_comparison2.push('f');
-	test_comparison2.push('g');
-	test_comparison2.push('h');
+	test_comparison3.push('e');
+	test_comparison3.push('f');
+	test_comparison3.push('g');
+	test_comparison3.push('h');
 	std::cout << "Top of the first stack is: " << test_comparison1.top();
 	std::cout << " and size() is : " << test_comparison1.size() << std::endl;
-	std::cout << "Top of the second stack is: " << test_comparison2.top();
-	std::cout << " and size() is : " << test_comparison2.size() << std::endl;
-	std::cout << "The return of test_comparison1 == test_comparaison2 is : ";
-	std::cout << verbose_bool(test_comparison1 == test_comparison2) << std::endl;
-	std::cout << "The return of test_comparison1 != test_comparaison2 is : ";
-	std::cout << verbose_bool(test_comparison1 != test_comparison2) << std::endl;
-	std::cout << "The return of test_comparison1 < test_comparaison2 is : ";
-	std::cout << verbose_bool(test_comparison1 < test_comparison2) << std::endl;
-	std::cout << "The return of test_comparison1 <= test_comparaison2 is : ";
-	std::cout << verbose_bool(test_comparison1 <= test_comparison2) << std::endl;
-	std::cout << "The return of test_comparison1 > test_comparaison2 is : ";
-	std::cout << verbose_bool(test_comparison1 > test_comparison2) << std::endl;
-	std::cout << "The return of test_comparison1 >= test_comparaison2 is : ";
-	std::cout << verbose_bool(test_comparison1 >= test_comparison2) << std::endl;
+	std::cout << "Top of the second stack is: " << test_comparison3.top();
+	std::cout << " and size() is : " << test_comparison3.size() << std::endl;
+	std::cout << "The return of test_comparison1 == test_comparaison3 is : ";
+	std::cout << verbose_bool(test_comparison1 == test_comparison3) << std::endl;
+	std::cout << "The return of test_comparison1 != test_comparaison3 is : ";
+	std::cout << verbose_bool(test_comparison1 != test_comparison3) << std::endl;
+	std::cout << "The return of test_comparison1 < test_comparaison3 is : ";
+	std::cout << verbose_bool(test_comparison1 < test_comparison3) << std::endl;
+	std::cout << "The return of test_comparison1 <= test_comparaison3 is : ";
+	std::cout << verbose_bool(test_comparison1 <= test_comparison3) << std::endl;
+	std::cout << "The return of test_comparison1 > test_comparaison3 is : ";
+	std::cout << verbose_bool(test_comparison1 > test_comparison3) << std::endl;
+	std::cout << "The return of test_comparison1 >= test_comparaison3 is : ";
+	std::cout << verbose_bool(test_comparison1 >= test_comparison3) << std::endl;
 }
 
 void test_stack(void) {

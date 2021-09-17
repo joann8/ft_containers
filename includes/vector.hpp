@@ -62,11 +62,15 @@ namespace ft
         
             // 2. Fill : constructs a container with n elmts, each elmt is a copy of val
             explicit vector(size_type n, const value_type & val = value_type(), const allocator_type & alloc = allocator_type()) :
-            _allocator(alloc), _capacity(n), _size(n), _array(this->_allocator.allocate(this->_capacity))
+            _allocator(alloc), _capacity(n), _size(n), _array(NULL) // _array(this->_allocator.allocate(this->_capacity))
             {
-                for (size_type i = 0; i < n; i++)
+                if (n > 0)
                 {
-                    this->_allocator.construct(this->_array + i, val);
+                    _array = this->_allocator.allocate(this->_capacity);
+                    for (size_type i = 0; i < n; i++)
+                    {
+                        this->_allocator.construct(this->_array + i, val);
+                    }
                 }
                 return;
             }
@@ -83,25 +87,33 @@ namespace ft
                     n++;
                 this->_size = n;
                 this->_capacity = n;
-                this->_array = this->_allocator.allocate(this->_capacity);
 
-                pointer it = this->_array;
-                while (first != last)
+                if (n > 0)
                 {
-                    this->_allocator.construct(it, *first);
-                    it++;
-                    first++;
+                    this->_array = this->_allocator.allocate(this->_capacity);
+
+                    pointer it = this->_array;
+                    while (first != last)
+                    {
+                        this->_allocator.construct(it, *first);
+                        it++;
+                        first++;
+                    }
                 }
                 return;
             }
            
             // 4.  Copy 
             vector(vector const & src) :
-            _allocator(src._allocator), _capacity(src._size), _size(src._size), _array(this->_allocator.allocate(this->_capacity))
+            _allocator(src._allocator), _capacity(src._size), _size(src._size), _array(NULL) // _array(this->_allocator.allocate(this->_capacity))
             {
-                for (size_type i = 0, size = src._size; i < size; i++)
+                if (src._size > 0)
                 {
-                    this->_allocator.construct(this->_array + i, src._array[i]);
+                    this->_array = this->_allocator.allocate(this->_capacity);
+                    for (size_type i = 0, size = src._size; i < size; i++)
+                    {
+                        this->_allocator.construct(this->_array + i, src._array[i]);
+                    }
                 }
                 return;
             }
@@ -122,7 +134,10 @@ namespace ft
                     {
                         this->_allocator.deallocate(this->_array, this->_capacity);
                         this->_capacity = src._size;
-                        this->_array = this->_allocator.allocate(this->_capacity);
+                        if (this->_capacity > 0)
+                            this->_array = this->_allocator.allocate(this->_capacity);
+                        else
+                            return *this;
                     }
                     this->_size = src._size;
                     for (size_type i = 0; i < src._size; i++) //++i?
@@ -305,7 +320,10 @@ namespace ft
                 {
 				    this->_allocator.deallocate(this->_array, this->_capacity);
 				    this->_capacity = n;
-				    this->_array = this->_allocator.allocate(this->_capacity);
+                    if (n > 0)
+				        this->_array = this->_allocator.allocate(this->_capacity);
+                    else
+                        return;
 			    }
                 pointer it = this->_array;
                 while (first != last) //pbm si first < last?
@@ -325,7 +343,10 @@ namespace ft
                 {
 				    this->_allocator.deallocate(this->_array, this->_capacity);
 				    this->_capacity = n;
-				    this->_array = this->_allocator.allocate(this->_capacity);
+                    if (n > 0)
+				        this->_array = this->_allocator.allocate(this->_capacity);
+                    else
+                        return;
 			    }
                 for(size_type i = 0; i < n; i++)  
                 {
@@ -455,9 +476,9 @@ namespace ft
 
             void pop_back()
             {
-                this->erase(--end());
-                //this->_size--;
-                //this->_allocator.destroy(this->_array + this->_size);
+              //  this->erase(--end());
+                this->_size--;
+                this->_allocator.destroy(this->_array + this->_size);
             }
             
             void swap (vector& src)

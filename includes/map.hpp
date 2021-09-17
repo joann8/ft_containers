@@ -252,7 +252,7 @@ namespace ft
                 size_type old_size = this->_size;
                 rbt_node* tmp = rbt_search_root(val.first);
 
-                if (tmp->is_null == true)
+                if (tmp && tmp->is_null == true)
                     rbt_insert(val);
                 iterator it = iterator(rbt_search_root(val.first));
                 if (this->_size == old_size)
@@ -263,7 +263,6 @@ namespace ft
 
             iterator insert(iterator position, const value_type& val)
             {
-                //cense accelerer--> a faire?
                 (void)position;
                 insert(val);
                 return iterator(rbt_search_root(val.first));
@@ -272,7 +271,6 @@ namespace ft
             template <class InputIterator>
             void insert(InputIterator first, InputIterator last)
             {
-                // garde fou pour la range?
                while(first != last)
                {
                     insert(*first);
@@ -285,7 +283,7 @@ namespace ft
             void erase(iterator position)
             {
                 rbt_node* tmp = position.ptr;
-                if (tmp->is_null == false)
+                if (tmp && tmp->is_null == false)
                 {
                    if (rbt_search_root(tmp->content.first))
                       rbt_delete(tmp->content.first, position);
@@ -297,7 +295,7 @@ namespace ft
 
                 rbt_node* tmp = rbt_search_root(k);
                 size_type size =  this->size();
-                if (tmp->is_null == false)
+                if (tmp && tmp->is_null == false)
                     rbt_delete(k, iterator(tmp));
                 return this->size() != size;
             }
@@ -316,7 +314,7 @@ namespace ft
                 while (i < diff)
                 {
                     rbt_node* tmp = rbt_search_root(first->first);
-                    if (tmp)
+                    if (tmp && tmp->is_null == false)
                         first = rbt_delete(tmp->content.first, first);
                     first++;
                     i++;
@@ -483,7 +481,6 @@ namespace ft
 
             rbt_node* rbt_create_node(value_type const & data)
             {
-        //      std::cout << " *** Enter rbt_create_node" << std::endl;
                 rbt_node* new_node = _node_allocator.allocate(1);
                 _node_allocator.construct(new_node, rbt_node());
 
@@ -495,16 +492,16 @@ namespace ft
                 new_node->is_red = true;
                 new_node->is_end = false;
                 _allocator.construct(&new_node->content, data);
-        //      std::cout << " *** Exit rbt_create_node "<< std::endl;
                 return new_node;
             }
 
             void rbt_free_node(rbt_node *node)
             {
-                //if (node && node->is_null == false)
-               // _allocator.destroy(&node->content);
-                _node_allocator.destroy(node);
-                _node_allocator.deallocate(node, 1);
+                if (node)
+                {
+                    _node_allocator.destroy(node);
+                    _node_allocator.deallocate(node, 1);
+                }
             }
 
             void rbt_clear_tree(rbt_node* node)
@@ -641,14 +638,10 @@ namespace ft
             
             void rbt_insert(value_type const & data)
             {
-           /*   std::cout << "\nSTATUS TREE INIT: " << std::endl;
-               print_rbt();
-                std::cout << std::endl;*/
                 rbt_node* new_node = rbt_create_node(data);
                 
                 if (_root->is_null == true) //CASE 1ST NODE IN THE TREE
                 {
-                //   std::cout << "*** ROOT is  NULL ***" << std::endl;
                     new_node->is_red = false;
                     rbt_free_node(_root);
                     _root = new_node;
@@ -659,8 +652,6 @@ namespace ft
                     _root->left = rbt_create_null_node(_root); 
                     _end->parent = _root;
                     this->_size++;
-                //  std::cout << "\nSTATUS TREE FINAL (root): " << std::endl;
-                //  print_rbt();
                     return;
                 }
 
@@ -712,9 +703,6 @@ namespace ft
                     }
                     this->_size++;
                     rbt_insert_fix_violation(new_node);
-                  /* std::cout << "\nSTATUS TREE FINAL (after insert fix): " << std::endl;
-                    print_rbt();
-                    std::cout << std::endl;*/
                     return;
                 }
             }
@@ -764,10 +752,19 @@ namespace ft
                     to_delete->parent->right = child;
                 if (sibling == _end)
                 {
-                    rbt_node* tmp = _root->getMaxChild();
-                    rbt_free_node(tmp->right);
-                    tmp->right = _end;
-                    _end->parent = tmp;
+                    if (child == _root)
+                    {
+                        _end->parent = child;
+                        rbt_free_node(child->right);
+                        child->right = _end;
+                    }
+                    else
+                    {
+                       rbt_node* tmp = _root->getMaxChild();
+                       rbt_free_node(tmp->right);
+                       tmp->right = _end;
+                      _end->parent = tmp;
+                    }
                 }
                 else
                     rbt_free_node(sibling);
@@ -888,28 +885,21 @@ namespace ft
             }
 
             iterator rbt_delete(const key_type& key, iterator position)
-            {
-            /*  std::cout << "\nSTATUS TREE INIT DELETE: " << std::endl;
-                std::cout << "root = " << _root->content.first << std::endl;
-                print_rbt();
-                std::cout << std::endl;*/
-                
+            {               
                 rbt_node* to_delete = rbt_search(_root, key);
                 rbt_node* replacement;
-                bool bol_change = 0; // sert a retrouver le bon iterator quand on change l'allocation mémoire
 
                 if (to_delete->is_null == true)
                     return position;
+                iterator save = position--;// sert a retrouver le bon iterator quand on change l'allocation mémoire
 
                 //Initital steps --> convert to a 0 or 1 child case 
                 if (to_delete->left->is_null == false && to_delete->right->is_null == false)
                 {
-                   //std::cout << "\n** Case 2  non null childs --- > conversion **" << std::endl;
                     replacement = to_delete;
                     to_delete = to_delete->right->getMinChild();
                     _allocator.destroy(&replacement->content);
                     _allocator.construct(&replacement->content, to_delete->content);
-                    bol_change = 1;
                 }
                 
                 bool original_is_red = to_delete->is_red;
@@ -937,15 +927,10 @@ namespace ft
                 this->_size--;
                 if (_root->is_null == false)
                     rbt_delete_fix_violation(original_is_red, replacement);
-                if(bol_change == 1)
-                    position--;
-             /*   std::cout << "\nSTATUS TREE DELETE END: " << std::endl;
-                print_rbt();
-                 std::cout << std::endl;*/
-                return position;
+                return save;
             }
 
-        public:
+        /*public:
 
             void print_rbt() const
             {
@@ -1010,7 +995,7 @@ namespace ft
                 else if (node->right->is_null == false) 
                     std::cout << node->right->content.first << std::endl;
                 std::cout << RESET;
-        }               
+        } */              
     };
 
     // ********** NON MEMBER FUNCTIONS OVERLOARDS ********** 
