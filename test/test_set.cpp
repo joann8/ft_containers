@@ -5,12 +5,12 @@ void printState(const ft::set<T>& test_set) {
 	std::cout << "current \033[30;4msize()\033[0m: " << test_set.size() << std::endl;
 	std::cout << "the return of \033[30;4mempty()\033[0m: " << verbose_bool(test_set.empty()) << std::endl;
 	for(typename ft::set<T>::const_iterator it = test_set.begin(); it != test_set.end(); it++)
-		std::cout << "Key: " << *it << " - Content: " << *it << std::endl;
+		std::cout << " Content: " << *it << std::endl;
 }
 
 void test_set() {
-/*	std::cout << std::endl << "Test for the container \033[31;1;4mmap\033[0m:" << std::endl;
-	ft::set<std::string>::iterator test_insert;
+	std::cout << std::endl << "Test for the container \033[31;1;4mset\033[0m:" << std::endl;
+	ft::set<std::string> test_insert;
 	std::string strings[] = {"truc", "bidule", "batman", "robin", "machin", "chose",
 							 "la famille adams", "pokemon", "rouge feu", "les simpsons", "ululu", "bidule",
 							 "wtf", "nausicaa", "show", "me the money", "anna", "montana"};
@@ -21,12 +21,12 @@ void test_set() {
 
 	
 	for (int i = 0; i < arrSize; i += 2) {
-		test_return = test_insert.insert(strings[i]);
-		std::cout << "the key : \"" << *test_return;
+		test_return = (test_insert.insert(strings[i])).first;
+		std::cout << "the key : \"" << *test_return << "\"" << std::endl;
 	}
 
-	test_return = test_insert.insert(strings[0]);
-	std::cout << "the key : \"" << *test_return;
+	test_return = (test_insert.insert(strings[0])).first;
+	std::cout << "the key : \"" << *test_return << "\""<< std::endl;
 
 	printState(test_insert);
 
@@ -68,19 +68,19 @@ void test_set() {
 	std::cout << *(test_insert.upper_bound(std::string("vroum"))) << std::endl;
 
 	std::cout << std::endl << "This test will focus on \033[31;1;4merase()\033[0m:" << std::endl;
-	std::cout << "Let's try to erase a node with no child 'show': " << std::endl;
+	std::cout << "Let's try to erase : \"show\" " <<  std::endl;
 	test_insert.erase(std::string("show"));
 	printState(test_insert);
-	std::cout << "Let's try to erase a node with one child 'rouge feu': " << std::endl;
+	std::cout << "Let's try to erase : \" rouge feu \"" << std::endl;
 	test_insert.erase(std::string("rouge feu"));
 	printState(test_insert);
-	std::cout << "Let's try to erase a node with two children 'machin': " << std::endl;
+	std::cout << "Let's try to erase : \"machin\"" << std::endl;
 	test_insert.erase(std::string("machin"));
 	printState(test_insert);
-	std::cout << "Let's try to erase the node before the end ptr: " << std::endl;
+	std::cout << "Let's try to erase : \"wtf\"" << std::endl;
 	test_insert.erase(std::string("wtf"));
 	printState(test_insert);
-	std::cout << "Let's try to erase the root: " << std::endl;
+	std::cout << "Let's try to erase : \"truc\"" << std::endl;
 	test_insert.erase(std::string("truc"));
 	printState(test_insert);
 
@@ -89,8 +89,8 @@ void test_set() {
 	std::cout << "let's see the return of count for inexistant key 'war': " << test_insert.count(std::string("war")) << std::endl;
 
 	std::cout << std::endl << "This test will focus on \033[31;1;4mswap()\033[0m:" << std::endl;
-	ft::set<std::string>::iterator test_swap;
-	std::cout << "Let's create a second map with 'alakazam' => 'psy', 'dracofeau' => 'feu' and 'coconfort' => 'poison'" << std::endl;
+	ft::set<std::string> test_swap;
+	std::cout << "Let's create a second map with 'alakazam', 'dracofeau'  and 'coconfort' " << std::endl;
 	test_swap.insert(std::string("alakazam"));
 	test_swap.insert(std::string("dracofeau"));
 	test_swap.insert(std::string("coconfort"));
@@ -102,17 +102,17 @@ void test_set() {
 
 	std::cout << std::endl << "This test will focus on \033[31;1;4mequal_range()\033[0m:" << std::endl;
 	std::cout << "Let's search equal range for 'coconfort': " << std::endl;
-	ft::set<std::string>::iterator, ft::set<std::string>::iterator> eq_test = test_insert.equal_range("coconfort");
-	std::cout << "first iterator: " << eq_test.first->first << " and second iterator: " << eq_test.second->first << std::endl;
+	ft::pair<ft::set<std::string>::iterator, ft::set<std::string>::iterator> eq_test = test_insert.equal_range("coconfort");
+	std::cout << "first iterator: " << *(eq_test.first) << " and second iterator: " << *(eq_test.second) << std::endl;
 
 	std::cout << std::endl << "This test will focus on \033[31;1;4mcopy constructor()\033[0m:" << std::endl;
 	std::cout << "Let's make a map with copy constructor with the second map passed" << std::endl;
-	ft::set<std::string>::iterator test_copy = ft::set<std::string>::iterator(test_swap);
+	ft::set<std::string> test_copy = ft::set<std::string>(test_swap);
 	printState(test_copy);
 
 	std::cout << std::endl << "This test will focus on \033[31;1;4massignation operator()\033[0m:" << std::endl;
 	std::cout << "Let's make a map from the alakazam contaienr" << std::endl;
-	ft::set<std::string>::iterator test_assignation;
+	ft::set<std::string> test_assignation;
 	test_assignation = test_insert;
 	printState(test_assignation);
 	std::cout << std::endl << "This test will focus on \033[31;1;4mcomparison operators()\033[0m:" << std::endl;
@@ -134,5 +134,5 @@ void test_set() {
 
 	std::cout << std::endl << "This test will focus on \033[31;1;4mclear()\033[0m:" << std::endl;
 	test_insert.clear();
-	printState(test_insert);*/
+	printState(test_insert);
 }

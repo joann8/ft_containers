@@ -19,10 +19,7 @@
 #include "less.hpp"
 #include "comparison.hpp"
 #include "enable_if.hpp"
-
-// a confirmer
 #include <string>
-#include <sstream> //pour exceptions messages
 
 
 //#include "iterator_reverse.hpp"
